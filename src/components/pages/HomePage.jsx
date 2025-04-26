@@ -1,6 +1,7 @@
 // src/pages/HomePage.jsx
 import React from "react";
-import Header from "@/components/layouts/Header";
+import { Header, Footer } from "../layouts/main.layout";
+
 import {
   HeroBanner,
   CategoryGrid,
@@ -9,8 +10,6 @@ import {
   PromoBanner,
   Newsletter,
 } from "@/components/elements/CommonElements";
-
-import Footer from "@/components/layouts/Footer";
 
 const HomePage = () => {
   return (
