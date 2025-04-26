@@ -1,6 +1,6 @@
 import React from "react";
 import { Button } from "@/components/ui/button";
-
+import { useNavigate } from "react-router-dom";
 // Hero Banner
 export const HeroBanner = () => (
   <section className="text-center py-12 bg-gray-100">
@@ -69,19 +69,27 @@ export const PromoBanner = () => (
 );
 
 // Newsletter
-export const Newsletter = () => (
-  <section className="text-center py-10 px-4">
-    <h2 className="text-lg mb-2">HÃY LÀ NGƯỜI TIÊN PHONG</h2>
-    <p className="text-sm mb-4 text-gray-500">
-      Nhận tin tức và khuyến mãi mới nhất sẽ được gửi đến hộp thư của bạn.
-    </p>
-    <div className="flex justify-center space-x-2">
-      <input
-        type="email"
-        placeholder="Your Email (required)"
-        className="border px-4 py-2 rounded w-1/2"
-      />
-      <Button>SIGN UP</Button>
-    </div>
-  </section>
-);
+export const Newsletter = () => {
+  const navigate = useNavigate();
+
+  const handleSignUp = () => {
+    navigate("/register"); // Điều hướng đến trang đăng ký
+  };
+
+  return (
+    <section className="text-center py-10 px-4">
+      <h2 className="text-lg mb-2">HÃY LÀ NGƯỜI TIÊN PHONG</h2>
+      <p className="text-sm mb-4 text-gray-500">
+        Nhận tin tức và khuyến mãi mới nhất sẽ được gửi đến hộp thư của bạn.
+      </p>
+      <div className="flex justify-center space-x-2">
+        <input
+          type="email"
+          placeholder="Your Email (required)"
+          className="border px-4 py-2 rounded w-1/2"
+        />
+        <Button onClick={handleSignUp}>SIGN UP</Button>
+      </div>
+    </section>
+  );
+};
