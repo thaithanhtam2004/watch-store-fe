@@ -1,6 +1,7 @@
 import React from "react";
 import { Button } from "@/components/ui/button";
-
+import { useNavigate } from "react-router-dom";
+import { useState } from "react";
 // Hero Banner
 export const HeroBanner = () => (
   <section className="relative text-white py-12 bg-gray-100">
@@ -90,31 +91,46 @@ export const PromoBanner = () => (
 );
 
 // Newsletter
-export const Newsletter = () => (
-  <section className="relative text-center py-10 px-4">
-    {/* Thêm ảnh ở trên */}
-    <img
-      src="/bg.jpg"
-      alt="Newsletter"
-      className="w-full h-[400px] object-cover mb-4"
-    />
+export const Newsletter = () => {
+  const navigate = useNavigate(); // tạo navigator
+  const [email, setEmail] = useState("");
 
-    {/* Chữ nằm trên ảnh, góc trái */}
-    <div className="absolute top-1/4 left-10 text-white">
-      <h2 className="text-3xl font-bold">HÃY LÀ NGƯỜI TIÊN PHONG</h2>
-      <p className="text-lg mb-4">
-        Nhận tin tức và khuyến mãi mới nhất sẽ được gửi đến hộp thư của bạn.
-      </p>
+  const handleSignUp = () => {
+    if (!email) {
+      alert("Vui lòng nhập email");
+      return;
+    }
+    // Bạn có thể thêm validation email ở đây nếu muốn
 
-      {/* Thanh gửi email nằm gần chữ */}
-      <div className="flex justify-center space-x-2 mt-4">
-        <input
-          type="email"
-          placeholder="Your Email (required)"
-          className="border px-4 py-2 rounded w-1/2"
-        />
-        <Button>SIGN UP</Button>
+    // chuyển sang trang đăng ký
+    navigate("/register"); // hoặc "/signup" tùy route bạn định nghĩa
+  };
+
+  return (
+    <section className="relative text-center py-10 px-4">
+      <img
+        src="/bg.jpg"
+        alt="Newsletter"
+        className="w-full h-[400px] object-cover mb-4"
+      />
+
+      <div className="absolute top-1/4 left-10 text-black">
+        <h2 className="text-3xl font-bold">HÃY LÀ NGƯỜI TIÊN PHONG</h2>
+        <p className="text-lg mb-4">
+          Nhận tin tức và khuyến mãi mới nhất sẽ được gửi đến hộp thư của bạn.
+        </p>
+
+        <div className="flex justify-center space-x-2 mt-4">
+          <input
+            type="email"
+            placeholder="Your Email (required)"
+            className="border px-4 py-2 rounded w-1/2"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+          />
+          <Button onClick={handleSignUp}>SIGN UP</Button>
+        </div>
       </div>
-    </div>
-  </section>
-);
+    </section>
+  );
+};
