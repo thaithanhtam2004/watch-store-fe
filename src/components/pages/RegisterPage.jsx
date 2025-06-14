@@ -1,10 +1,11 @@
 import React, { useState } from "react";
-import { useRegister } from "../../hooks/UseRegister"; // chỉnh đường dẫn đúng
-
+import { useRegister } from "../../hooks/UseRegister"; 
+import { Link } from "react-router-dom";// chỉnh đường dẫn đúng
+import { useNavigate } from "react-router-dom";
 const RegisterPage = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-
+  const navigate = useNavigate();
   const { register, loading, error, user } = useRegister();
 
   const handleSubmit = async (e) => {
@@ -58,9 +59,9 @@ const RegisterPage = () => {
         </form>
 
         <div className="mt-4 text-xs text-gray-600">
-          <a href="index.html" className="hover:underline">
+         <button onClick={()=> navigate("/login")} className="text-xs text-gray-600 hover:underline" >
             Đã có tài khoản? Đăng nhập
-          </a>
+         </button>
         </div>
       </div>
     </div>
