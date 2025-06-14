@@ -13,7 +13,7 @@ export function useRegister() {
     try {
       const response = await axios.post(
         'http://localhost:3000/api/users/register',
-        { email, password },
+        { email, matkhau:password },
         { withCredentials: true }
       );
       setUser(response.data);
@@ -28,3 +28,4 @@ export function useRegister() {
 
   return { register, loading, error, user };
 }
+
