@@ -2,6 +2,7 @@ import { useState } from "react"
 import Dashboard from "./Admin/Dashboard"
 import Products from "./Admin/Products"
 import WatchModels from "./Admin/Watchs"
+import WatchCates from "./Admin/WatchCates"
 // Tạm thời tạo các component nếu chưa có file
 
 const Orders = () => <div>Trang quản lý đơn hàng</div>
@@ -18,6 +19,8 @@ const AdminPage = () => {
         return <Products />
       case "donghos":
         return <WatchModels />
+      case "danhmucs":
+        return <WatchCates />
       case "orders":
         return <Orders />
       case "users":
@@ -36,6 +39,7 @@ const AdminPage = () => {
           <li><button onClick={() => setPage("dashboard")} className="w-full text-left hover:underline">📊 Dashboard</button></li>
           <li><button onClick={() => setPage("products")} className="w-full text-left hover:underline">🛍️ Sản phẩm</button></li>
            <li><button onClick={() => setPage("donghos")} className="w-full text-left hover:underline">🛍️ Đồng hồ</button></li>
+           <li><button onClick={() => setPage("danhmucs")} className="w-full text-left hover:underline">🛍️ Danh mục đồng hồ</button></li>
           <li><button onClick={() => setPage("orders")} className="w-full text-left hover:underline">📦 Đơn hàng</button></li>
           <li><button onClick={() => setPage("users")} className="w-full text-left hover:underline">👤 Người dùng</button></li>
         </ul>
