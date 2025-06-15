@@ -1,0 +1,28 @@
+import axios from 'axios';
+
+const API_BASE = 'http://localhost:3000/api/sanphams'; // hoặc 'sanphams' tùy backend
+
+export const getAllSanPham = async () => {
+  const response = await axios.get(API_BASE);
+  return response.data.data; // giả định response trả về { success: true, data: [...] }
+};
+
+export const getSanPhamById = async (masanpham) => {
+  const response = await axios.get(`${API_BASE}/${masanpham}`);
+  return response.data;
+};
+
+export const createSanPham = async (sanPhamData) => {
+  const response = await axios.post(API_BASE, sanPhamData, { withCredentials: true });
+  return response.data;
+};
+
+export const updateSanPham = async (masanpham, sanPhamData) => {
+  const response = await axios.put(`${API_BASE}/${masanpham}`, sanPhamData, { withCredentials: true });
+  return response.data;
+};
+
+export const deleteSanPham = async (masanpham) => {
+  const response = await axios.delete(`${API_BASE}/${masanpham}`, { withCredentials: true });
+  return response.data;
+};
