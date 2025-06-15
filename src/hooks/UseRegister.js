@@ -1,5 +1,6 @@
+// hooks/useRegister.js
 import { useState } from 'react';
-import axios from 'axios';
+import { registerRequest } from '../services/authenService'; // đường dẫn có thể điều chỉnh theo project của bạn
 
 export function useRegister() {
   const [loading, setLoading] = useState(false);
@@ -11,15 +12,11 @@ export function useRegister() {
     setError(null);
 
     try {
-      const response = await axios.post(
-        'http://localhost:3000/api/users/register',
-        { email, matkhau:password },
-        { withCredentials: true }
-      );
-      setUser(response.data);
+      const userData = await registerRequest(email, password);
+      setUser(userData);
     } catch (err) {
-      // Lấy message lỗi từ response hoặc message mặc định
-      const message = err.response?.data?.message || err.message || 'Đăng ký thất bại';
+      const message =
+        err.response?.data?.message || err.message || 'Đăng ký thất bại';
       setError(message);
     } finally {
       setLoading(false);
@@ -28,4 +25,3 @@ export function useRegister() {
 
   return { register, loading, error, user };
 }
-
