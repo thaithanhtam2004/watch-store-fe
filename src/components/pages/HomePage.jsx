@@ -19,7 +19,6 @@ const HomePage = () => {
       <CategoryGrid />
       <ServicesBar />
       <ProductSection title="BÁN CHẠY" type="best-sellers" />
-      <ProductSection title="PHỤ KIỆN" type="accessories" />
       <PromoBanner />
       <Newsletter />
       <Footer />

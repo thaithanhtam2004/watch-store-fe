@@ -1,7 +1,8 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { useNavigate } from "react-router-dom";
-import { useState } from "react";
+import axios from "axios";
+
 // Hero Banner
 export const HeroBanner = () => (
   <section className="relative text-white py-12 bg-gray-100">
@@ -34,7 +35,7 @@ export const CategoryGrid = () => (
           {" "}
           {/* Dùng flex để căn chữ vào giữa */}
           <h3 className="text-white uppercase text-black font-bold">
-            {["Đồng Hồ Nữ", "Đồng Hồ Nam", "Phụ Kiện"][i]}
+            {["Đồng Hồ Nữ", "Đồng Hồ Nam", "Best Seller"][i]}
           </h3>
         </div>
       </div>
@@ -52,28 +53,50 @@ export const ServicesBar = () => (
 );
 
 // Section sản phẩm
-export const ProductSection = ({ title, type }) => (
-  <section
-    className={`px-6 py-10 ${type === "accessories" ? "bg-gray-50" : ""}`}
-  >
-    <h2 className="text-center text-lg mb-6 tracking-widest">{title}</h2>
-    <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-      {[...Array(4)].map((_, i) => (
-        <div key={i} className="text-center">
-          <div className="text-xs text-gray-500">
-            {type === "accessories" ? "NHẪN" : "PHỤ KIỆN"}
+export const ProductSection = ({ title, type }) => {
+  const [products, setProducts] = useState([]);
+
+  useEffect(() => {
+    axios
+      .get(`/api/sanpham?type=${type}`)
+      .then((res) => setProducts(res.data))
+      .catch((err) => console.error("Lỗi khi tải sản phẩm:", err));
+  }, [type]);
+
+  return (
+    <section
+      className={`px-6 py-10 ${type === "accessories" ? "bg-gray-50" : ""}`}
+    >
+      <h2 className="text-center text-lg mb-6 tracking-widest">{title}</h2>
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+        {products.map((sp) => (
+          <div key={sp.masanpham} className="text-center">
+            <img
+              src={sp.hinhanhchinh}
+              alt={sp.tensanpham}
+              className="w-full h-48 object-cover mb-2"
+            />
+            <div className="text-xs text-gray-500">{sp.tensanpham}</div>
+            {sp.phantramgiam ? (
+              <>
+                <p className="line-through text-sm text-gray-400">
+                  {sp.giaban.toLocaleString()} đ
+                </p>
+                <p className="font-bold text-md text-red-500">
+                  {(sp.giaban * (1 - sp.phantramgiam / 100)).toLocaleString()} đ
+                </p>
+              </>
+            ) : (
+              <p className="font-bold text-md">
+                {sp.giaban.toLocaleString()} đ
+              </p>
+            )}
           </div>
-          <p className="line-through text-sm">
-            {type === "accessories" ? "1.100.000 đ" : "1.400.000 đ"}
-          </p>
-          <p className="font-bold text-md">
-            {type === "accessories" ? "490.000 đ" : "550.000 đ"}
-          </p>
-        </div>
-      ))}
-    </div>
-  </section>
-);
+        ))}
+      </div>
+    </section>
+  );
+};
 
 // Promo banner
 export const PromoBanner = () => (

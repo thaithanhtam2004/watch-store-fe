@@ -20,9 +20,8 @@ export const Header = () => (
 
     <nav className="flex justify-center space-x-6 border-b py-2 text-xl uppercase">
       <a href="#">Best Seller</a>
-      <a href="#">Đồng Hồ</a>
-      <a href="#">Phụ Kiện</a>
-      <a href="#">Dây Đồng Hồ</a>
+      <a href="#">Đồng Hồ Nam</a>
+      <a href="#">Đồng Hồ Nữ</a>
     </nav>
   </>
 );
