@@ -1,84 +1,61 @@
-import { useEffect, useState } from "react"
+import { useSanPhamList } from '../../../hooks/useSanPhamList'; // Đảm bảo đúng đường dẫn
 
-export default function Products() {
-  const [products, setProducts] = useState([])
-
-  // Giả lập dữ liệu
-  useEffect(() => {
-    const data = [
-      {
-        masanpham: "SP001",
-        tensanpham: "Casio MTP-V002L-1B3UDF",
-        mamodel: "M001",
-        mota: "Thiết kế cổ điển, dây da cao cấp",
-        giaban: 1250000,
-        hinhanhchinh: "/images/sp1.jpg",
-        ngaytao: "2025-06-01",
-        mauudai: "UD01",
-        soluong: 15,
-        bestseller: true,
-      },
-      {
-        masanpham: "SP002",
-        tensanpham: "Citizen BI5000-87L",
-        mamodel: "M002",
-        mota: "Mặt xanh navy, chống nước tốt",
-        giaban: 2450000,
-        hinhanhchinh: "/images/sp2.jpg",
-        ngaytao: "2025-06-10",
-        mauudai: null,
-        soluong: 8,
-        bestseller: false,
-      }
-    ]
-    setProducts(data)
-  }, [])
+export default function SanPhamList() {
+  const { data: products, loading, error } = useSanPhamList();
 
   return (
     <div>
-      <h1 className="text-2xl font-bold mb-6">Quản lý sản phẩm</h1>
+      <h1 className="text-2xl font-bold mb-6">Quản lý Sản phẩm</h1>
 
-      <div className="overflow-x-auto">
-        <table className="table-auto w-full text-left border rounded shadow bg-white">
-          <thead className="bg-gray-100">
-            <tr>
-              <th className="p-3">Hình</th>
-              <th className="p-3">Mã SP</th>
-              <th className="p-3">Tên sản phẩm</th>
-              <th className="p-3">Model</th>
-              <th className="p-3">Mô tả</th>
-              <th className="p-3">Giá bán</th>
-              <th className="p-3">Ưu đãi</th>
-              <th className="p-3">Số lượng</th>
-              <th className="p-3">Bán chạy</th>
-              <th className="p-3">Ngày tạo</th>
-            </tr>
-          </thead>
-          <tbody>
-            {products.map(sp => (
-              <tr key={sp.masanpham} className="border-t hover:bg-gray-50">
-                <td className="p-3">
-                  <img src={sp.hinhanhchinh} alt={sp.tensanpham} className="w-16 h-16 object-cover rounded" />
-                </td>
-                <td className="p-3">{sp.masanpham}</td>
-                <td className="p-3">{sp.tensanpham}</td>
-                <td className="p-3">{sp.mamodel}</td>
-                <td className="p-3">{sp.mota ?? "—"}</td>
-                <td className="p-3">{sp.giaban.toLocaleString()}₫</td>
-                <td className="p-3">{sp.mauudai ?? "Không có"}</td>
-                <td className="p-3">{sp.soluong}</td>
-                <td className="p-3">{sp.bestseller ? "✅" : "❌"}</td>
-                <td className="p-3">{new Date(sp.ngaytao).toLocaleDateString("vi-VN")}</td>
-              </tr>
-            ))}
-            {products.length === 0 && (
+      {loading && <p className="text-gray-500">Đang tải dữ liệu...</p>}
+      {error && <p className="text-red-500">Lỗi: {error}</p>}
+
+      {!loading && !error && (
+        <div className="overflow-x-auto">
+          <table className="table-auto w-full text-left border rounded shadow bg-white text-sm">
+            <thead className="bg-gray-100">
               <tr>
-                <td colSpan="10" className="text-center text-gray-500 py-4">Không có sản phẩm</td>
+                <th className="p-3">Mã SP</th>
+                <th className="p-3">Tên sản phẩm</th>
+                <th className="p-3">Model</th>
+                <th className="p-3">Mô tả</th>
+                <th className="p-3">Giá bán</th>
+                <th className="p-3">Hình ảnh</th>
+                <th className="p-3">Ngày tạo</th>
+                <th className="p-3">Ưu đãi</th>
+                <th className="p-3">Số lượng</th>
+                <th className="p-3">Best seller</th>
               </tr>
-            )}
-          </tbody>
-        </table>
-      </div>
+            </thead>
+            <tbody>
+              {products.length > 0 ? (
+                products.map((sp) => (
+                  <tr key={sp.masanpham} className="border-t hover:bg-gray-50">
+                    <td className="p-3">{sp.masanpham}</td>
+                    <td className="p-3">{sp.tensanpham}</td>
+                    <td className="p-3">{sp.mamodel}</td>
+                    <td className="p-3 max-w-xs truncate">{sp.mota}</td>
+                    <td className="p-3">{Number(sp.giaban).toLocaleString()} VND</td>
+                    <td className="p-3">
+                      <img src={sp.hinhanhchinh} alt="ảnh sản phẩm" className="w-16 h-16 object-cover rounded" />
+                    </td>
+                    <td className="p-3">{new Date(sp.ngaytao).toLocaleDateString()}</td>
+                    <td className="p-3">{sp.mauudai}</td>
+                    <td className="p-3">{sp.soluong}</td>
+                    <td className="p-3">{sp.bestseller ? '✅' : '❌'}</td>
+                  </tr>
+                ))
+              ) : (
+                <tr>
+                  <td colSpan="10" className="text-center text-gray-500 py-4">
+                    Không có dữ liệu
+                  </td>
+                </tr>
+              )}
+            </tbody>
+          </table>
+        </div>
+      )}
     </div>
-  )
+  );
 }
