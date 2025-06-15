@@ -116,7 +116,6 @@ export const PromoBanner = () => (
 // Newsletter
 export const Newsletter = () => {
   const navigate = useNavigate(); // tạo navigator
-  const [email, setEmail] = useState("");
 
   const handleSignUp = () => {
     if (!email) {
