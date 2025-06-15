@@ -1,17 +1,17 @@
-import React, { useEffect, useState } from "react";
+import React, { useState, useEffect } from "react";
+import axios from "axios";
 import { Button } from "@/components/ui/button";
 import { useNavigate } from "react-router-dom";
-import axios from "axios";
 
 // Hero Banner
 export const HeroBanner = () => (
   <section className="relative text-white py-12 bg-gray-100">
     <img
-      src="nen.png"
+      src="/nen.png"
       alt="Quà tặng cho nàng"
-      className="w-full h-90 object-cover"
+      className="w-full h-[360px] object-cover"
     />
-    <div className="absolute top-1/3 right-41 transform -translate-y-1/2">
+    <div className="absolute top-1/3 right-10 transform -translate-y-1/2">
       <h2 className="text-3xl mb-2 tracking-wider">QUÀ TẶNG CHO NÀNG</h2>
       <p className="text-lg mb-4 tracking-wide">
         BỘ SƯU TẬP QUÀ TẶNG Ý NGHĨA NHẤT
@@ -26,15 +26,9 @@ export const CategoryGrid = () => (
   <div className="grid grid-cols-3 gap-4 px-6 py-8">
     {["DHNữ.png", "DHNam.png", "phukien.png"].map((img, i) => (
       <div key={i} className="relative text-center">
-        <img
-          src={`/${img}`}
-          alt=""
-          className="w-full h-80 object-cover" // Đảm bảo ảnh có chiều cao đồng đều
-        />
+        <img src={`/${img}`} alt="" className="w-full h-80 object-cover" />
         <div className="absolute inset-0 flex items-center justify-center">
-          {" "}
-          {/* Dùng flex để căn chữ vào giữa */}
-          <h3 className="text-white uppercase text-black font-bold">
+          <h3 className="text-white text-xl font-bold bg-black/50 px-2 py-1 rounded">
             {["Đồng Hồ Nữ", "Đồng Hồ Nam", "Best Seller"][i]}
           </h3>
         </div>
@@ -58,8 +52,11 @@ export const ProductSection = ({ title, type }) => {
 
   useEffect(() => {
     axios
-      .get(`/api/sanpham?type=${type}`)
-      .then((res) => setProducts(res.data))
+      .get(`http://localhost:3000/api/sanphams?type=${type}`)
+      .then((res) => {
+        console.log("DATA BACKEND:", res.data);
+        setProducts(res.data);
+      })
       .catch((err) => console.error("Lỗi khi tải sản phẩm:", err));
   }, [type]);
 
@@ -101,10 +98,7 @@ export const ProductSection = ({ title, type }) => {
 // Promo banner
 export const PromoBanner = () => (
   <section className="bg-gray-700 text-white py-10 text-center relative">
-    {/* Đặt ảnh với class 'object-cover' để ảnh không bị méo */}
-    <img src="/hn.png" alt="Promo" className="w-full h-65 object-cover" />
-
-    {/* Chữ và button được căn giữa */}
+    <img src="/hn.png" alt="Promo" className="w-full h-[320px] object-cover" />
     <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 text-center">
       <h3 className="text-xl tracking-widest mb-2">THE MOMENT</h3>
       <h2 className="text-5xl font-light mb-4">I FEEL FROM THE SKY</h2>
@@ -115,17 +109,15 @@ export const PromoBanner = () => (
 
 // Newsletter
 export const Newsletter = () => {
-  const navigate = useNavigate(); // tạo navigator
+  const navigate = useNavigate();
+  const [email, setEmail] = useState("");
 
   const handleSignUp = () => {
     if (!email) {
       alert("Vui lòng nhập email");
       return;
     }
-    // Bạn có thể thêm validation email ở đây nếu muốn
-
-    // chuyển sang trang đăng ký
-    navigate("/register"); // hoặc "/signup" tùy route bạn định nghĩa
+    navigate("/register");
   };
 
   return (
@@ -135,13 +127,11 @@ export const Newsletter = () => {
         alt="Newsletter"
         className="w-full h-[400px] object-cover mb-4"
       />
-
       <div className="absolute top-1/4 left-10 text-black">
         <h2 className="text-3xl font-bold">HÃY LÀ NGƯỜI TIÊN PHONG</h2>
         <p className="text-lg mb-4">
           Nhận tin tức và khuyến mãi mới nhất sẽ được gửi đến hộp thư của bạn.
         </p>
-
         <div className="flex justify-center space-x-2 mt-4">
           <input
             type="email"
