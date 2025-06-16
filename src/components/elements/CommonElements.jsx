@@ -10,7 +10,10 @@ export const HeroBanner = () => (
       alt="Quà tặng cho nàng"
       className="w-full h-90 object-cover"
     />
+
     <div className="absolute top-1/3 right-41 transform -translate-y-1/2">
+    <div className="absolute top-1/3 left-10 transform -translate-y-1/2">
+
       <h2 className="text-3xl mb-2 tracking-wider">QUÀ TẶNG CHO NÀNG</h2>
       <p className="text-lg mb-4 tracking-wide">
         BỘ SƯU TẬP QUÀ TẶNG Ý NGHĨA NHẤT
@@ -52,6 +55,7 @@ export const ServicesBar = () => (
 );
 
 // Section sản phẩm
+<<<<<<< HEAD
 export const ProductSection = ({ title, type }) => (
   <section
     className={`px-6 py-10 ${type === "accessories" ? "bg-gray-50" : ""}`}
@@ -62,6 +66,48 @@ export const ProductSection = ({ title, type }) => (
         <div key={i} className="text-center">
           <div className="text-xs text-gray-500">
             {type === "accessories" ? "NHẪN" : "PHỤ KIỆN"}
+=======
+export const ProductSection = ({ title, type }) => {
+  const [products, setProducts] = useState([]);
+  useEffect(() => {
+    axios
+      .get(`http://localhost:3000/api/sanphams?${type}=1`)
+      .then((res) => {
+        if (res.data.success) setProducts(res.data.data);
+        else console.error("Lỗi dữ liệu:", res.data.message);
+      })
+      .catch((err) => console.error("Lỗi khi tải sản phẩm:", err));
+  }, [type]);
+
+  return (
+    <section
+      className={`px-6 py-10 ${type === "accessories" ? "bg-gray-50" : ""}`}
+    >
+      <h2 className="text-center text-lg mb-6 tracking-widest">{title}</h2>
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+        {products.slice(0, 4).map((sp) => (
+          <div key={sp.masanpham} className="text-center">
+            <img
+              src={sp.hinhanhchinh}
+              alt={sp.tensanpham}
+              className="w-full h-48 object-cover mb-2"
+            />
+            <div className="text-xs text-gray-500">{sp.tensanpham}</div>
+            {sp.phantramgiam ? (
+              <>
+                <p className="line-through text-sm text-gray-400">
+                  {sp.giaban.toLocaleString()} đ
+                </p>
+                <p className="font-bold text-md text-red-500">
+                  {(sp.giaban * (1 - sp.phantramgiam / 100)).toLocaleString()} đ
+                </p>
+              </>
+            ) : (
+              <p className="font-bold text-md">
+                {sp.giaban.toLocaleString()} đ
+              </p>
+            )}
+>>>>>>> ee7745d2d5b5dfec856b3e762e8161d7274a51fa
           </div>
           <p className="line-through text-sm">
             {type === "accessories" ? "1.100.000 đ" : "1.400.000 đ"}
