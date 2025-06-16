@@ -11,7 +11,7 @@ export const HeroBanner = () => (
       alt="Quà tặng cho nàng"
       className="w-full h-[360px] object-cover"
     />
-    <div className="absolute top-1/3 right-10 transform -translate-y-1/2">
+    <div className="absolute top-1/3 left-10 transform -translate-y-1/2">
       <h2 className="text-3xl mb-2 tracking-wider">QUÀ TẶNG CHO NÀNG</h2>
       <p className="text-lg mb-4 tracking-wide">
         BỘ SƯU TẬP QUÀ TẶNG Ý NGHĨA NHẤT
@@ -49,13 +49,12 @@ export const ServicesBar = () => (
 // Section sản phẩm
 export const ProductSection = ({ title, type }) => {
   const [products, setProducts] = useState([]);
-
   useEffect(() => {
     axios
-      .get(`http://localhost:3000/api/sanphams?type=${type}`)
+      .get(`http://localhost:3000/api/sanphams?${type}=1`)
       .then((res) => {
-        console.log("DATA BACKEND:", res.data);
-        setProducts(res.data);
+        if (res.data.success) setProducts(res.data.data);
+        else console.error("Lỗi dữ liệu:", res.data.message);
       })
       .catch((err) => console.error("Lỗi khi tải sản phẩm:", err));
   }, [type]);
@@ -66,7 +65,7 @@ export const ProductSection = ({ title, type }) => {
     >
       <h2 className="text-center text-lg mb-6 tracking-widest">{title}</h2>
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-        {products.map((sp) => (
+        {products.slice(0, 4).map((sp) => (
           <div key={sp.masanpham} className="text-center">
             <img
               src={sp.hinhanhchinh}

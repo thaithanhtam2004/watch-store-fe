@@ -18,7 +18,10 @@ const HomePage = () => {
       <HeroBanner />
       <CategoryGrid />
       <ServicesBar />
-      <ProductSection title="BÁN CHẠY" type="best-sellers" />
+
+      {/* Các section sản phẩm */}
+      <ProductSection title="BÁN CHẠY" type="bestseller" />
+
       <PromoBanner />
       <Newsletter />
       <Footer />
