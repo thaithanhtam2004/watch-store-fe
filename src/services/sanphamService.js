@@ -1,6 +1,6 @@
-import axios from 'axios';
+import axios from "axios";
 
-const API_BASE = 'http://localhost:3000/api/sanphams'; // hoặc 'sanphams' tùy backend
+const API_BASE = "http://localhost:3000/api/sanphams"; // hoặc 'sanphams' tùy backend
 
 export const getAllSanPham = async () => {
   const response = await axios.get(API_BASE);
@@ -13,16 +13,36 @@ export const getSanPhamById = async (masanpham) => {
 };
 
 export const createSanPham = async (sanPhamData) => {
-  const response = await axios.post(API_BASE, sanPhamData, { withCredentials: true });
+  const response = await axios.post(API_BASE, sanPhamData, {
+    withCredentials: true,
+  });
   return response.data;
 };
 
 export const updateSanPham = async (masanpham, sanPhamData) => {
-  const response = await axios.put(`${API_BASE}/${masanpham}`, sanPhamData, { withCredentials: true });
+  const response = await axios.put(`${API_BASE}/${masanpham}`, sanPhamData, {
+    withCredentials: true,
+  });
   return response.data;
+};
+export const getBestsellerProducts = async () => {
+  const response = await axios.get(
+    "http://localhost:3000/api/sanphams/bestseller"
+  );
+  return response.data.data; // đảm bảo backend trả { data: [...] }
+};
+export const getDongHoNam = async () => {
+  const res = await axios.get("http://localhost:3000/api/sanphams/donghonam");
+  return Array.isArray(res.data) ? res.data : res.data.data;
+};
+export const getDongHoNu = async () => {
+  const res = await axios.get("http://localhost:3000/api/sanphams/donghonu");
+  return Array.isArray(res.data) ? res.data : res.data.data;
 };
 
 export const deleteSanPham = async (masanpham) => {
-  const response = await axios.delete(`${API_BASE}/${masanpham}`, { withCredentials: true });
+  const response = await axios.delete(`${API_BASE}/${masanpham}`, {
+    withCredentials: true,
+  });
   return response.data;
 };
