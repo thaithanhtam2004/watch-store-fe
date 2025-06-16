@@ -3,6 +3,9 @@ import Dashboard from "./Admin/Dashboard"
 import Products from "./Admin/Products"
 import WatchModels from "./Admin/Watchs"
 import WatchCates from "./Admin/WatchCates"
+import UuDaiVaPhuongThucThanhToan from "./Admin/UuDaiVaPhuongThucThanhToanList"
+import KhoHang from "./Admin/KhoHang"
+import NguoiDung from "./Admin/NguoiDung"
 // Tạm thời tạo các component nếu chưa có file
 
 const Orders = () => <div>Trang quản lý đơn hàng</div>
@@ -15,12 +18,18 @@ const AdminPage = () => {
     switch (page) {
       case "dashboard":
         return <Dashboard />
+      case "nguoidungs":
+        return <NguoiDung />
       case "products":
         return <Products />
       case "donghos":
         return <WatchModels />
       case "danhmucs":
         return <WatchCates />
+      case "khohang":
+        return <KhoHang />
+      case "uudaivaphuongthucthanhtoans":
+         return <UuDaiVaPhuongThucThanhToan />
       case "orders":
         return <Orders />
       case "users":
@@ -37,9 +46,12 @@ const AdminPage = () => {
         <h1 className="text-xl font-bold mb-6">Quản trị</h1>
         <ul className="space-y-3">
           <li><button onClick={() => setPage("dashboard")} className="w-full text-left hover:underline">📊 Dashboard</button></li>
+          <li><button onClick={() => setPage("nguoidungs")} className="w-full text-left hover:underline">🛍️ Người dùng</button></li>
           <li><button onClick={() => setPage("products")} className="w-full text-left hover:underline">🛍️ Sản phẩm</button></li>
            <li><button onClick={() => setPage("donghos")} className="w-full text-left hover:underline">🛍️ Đồng hồ</button></li>
            <li><button onClick={() => setPage("danhmucs")} className="w-full text-left hover:underline">🛍️ Danh mục đồng hồ</button></li>
+           <li><button onClick={() => setPage("khohang")} className="w-full text-left hover:underline">🛍️ Kho hàng</button></li>
+           <li><button onClick={() => setPage("uudaivaphuongthucthanhtoans")} className="w-full text-left hover:underline">🛍️ Ưu đãi và phương thức thanh toán</button></li>
           <li><button onClick={() => setPage("orders")} className="w-full text-left hover:underline">📦 Đơn hàng</button></li>
           <li><button onClick={() => setPage("users")} className="w-full text-left hover:underline">👤 Người dùng</button></li>
         </ul>
