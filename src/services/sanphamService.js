@@ -26,3 +26,9 @@ export const deleteSanPham = async (masanpham) => {
   const response = await axios.delete(`${API_BASE}/${masanpham}`, { withCredentials: true });
   return response.data;
 };
+
+
+export const getSanPhamDetail = async (masanpham) => {
+  const response = await axios.get(`${API_BASE}/${masanpham}/detail`);
+  return response.data.data;
+};
