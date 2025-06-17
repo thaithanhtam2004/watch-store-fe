@@ -1,8 +1,11 @@
-import { useEffect, useState } from "react";
-import { useDonHangList } from "../../../hooks/useDonHangList "; // Đảm bảo đúng đường dẫn
+import { useDonHangList } from "../../../hooks/useDonHangList";     // ✅ hook lấy đơn hàng
+import { useNguoiDungList } from "../../../hooks/useNguoiDungList"; // ✅ hook lấy người dùng
+import { useSanPhamList } from "../../../hooks/useSanPhamList";     // ✅ hook lấy sản phẩm
 
 export default function Dashboard() {
-  const { data: donHangData, loading, error } = useDonHangList();
+  const { data: donHangData = [], loading: loadingDH, error: errorDH } = useDonHangList();
+  const { data: nguoiDungData = [], loading: loadingND, error: errorND } = useNguoiDungList();
+  const { data: sanPhamData = [], loading: loadingSP, error: errorSP } = useSanPhamList();
 
   return (
     <div>
@@ -10,18 +13,19 @@ export default function Dashboard() {
 
       {/* Box thống kê */}
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 mb-8">
-        <Box title="Tổng đơn hàng" value={donHangData?.length || 0} color="bg-blue-500" />
-        <Box title="Tổng sản phẩm" value="?" color="bg-green-500" /> {/* Cập nhật sau nếu có */}
-        <Box title="Tổng người dùng" value="?" color="bg-yellow-500" /> {/* Cập nhật sau nếu có */}
+        <Box title="Tổng đơn hàng" value={donHangData.length} color="bg-blue-500" />
+        <Box title="Tổng sản phẩm" value={sanPhamData.length} color="bg-green-500" />
+        <Box title="Tổng người dùng" value={nguoiDungData.length} color="bg-yellow-500" />
       </div>
 
       {/* Tất cả đơn hàng */}
       <div className="bg-white rounded shadow p-4">
         <h2 className="text-xl font-semibold mb-4">Tất cả đơn hàng</h2>
-        {loading ? (
-          <p>Đang tải dữ liệu...</p>
-        ) : error ? (
-          <p className="text-red-500">Lỗi: {error}</p>
+
+        {loadingDH ? (
+          <p className="text-blue-500">Đang tải đơn hàng...</p>
+        ) : errorDH ? (
+          <p className="text-red-500">Lỗi: {errorDH}</p>
         ) : (
           <table className="w-full text-left table-auto">
             <thead>
@@ -61,6 +65,7 @@ export default function Dashboard() {
   );
 }
 
+// Component hiển thị Box thống kê
 function Box({ title, value, color }) {
   return (
     <div className={`p-4 rounded shadow text-white ${color}`}>
