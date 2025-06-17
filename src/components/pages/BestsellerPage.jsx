@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import { Link } from "react-router-dom";
 import { getBestsellerProducts } from "@/services/sanphamService";
 import { Header, Footer } from "../layouts/main.layout";
 
@@ -38,20 +39,27 @@ const BestsellerPage = () => {
                 key={product.masanpham}
                 className="bg-white rounded-xl shadow hover:shadow-xl transition duration-300 group overflow-hidden"
               >
-                <img
-                  src={product.hinhanhchinh || "/fallback.jpg"}
-                  alt={product.tensanpham || "Đồng hồ"}
-                  className="w-full h-60 object-cover group-hover:scale-105 transition duration-300"
-                />
+                <Link to={`/product/${product.masanpham}`}>
+                  <img
+                    src={product.hinhanhchinh || "/fallback.jpg"}
+                    alt={product.tensanpham || "Đồng hồ"}
+                    className="w-full h-60 object-cover group-hover:scale-105 transition duration-300"
+                  />
+                </Link>
+
                 <div className="p-4">
-                  <h2 className="text-lg font-semibold text-gray-800 truncate">
-                    {product.tensanpham || "Tên sản phẩm"}
-                  </h2>
+                  <Link to={`/product/${product.masanpham}`}>
+                    <h2 className="text-lg font-semibold text-gray-800 truncate hover:text-black">
+                      {product.tensanpham || "Tên sản phẩm"}
+                    </h2>
+                  </Link>
+
                   <p className="text-red-600 text-xl font-bold mt-1">
                     {product.giaban
                       ? Number(product.giaban).toLocaleString() + " ₫"
                       : "Giá đang cập nhật"}
                   </p>
+
                   <button className="mt-3 w-full bg-gray-800 text-white py-2 rounded-lg hover:bg-gray-700 transition">
                     Thêm vào giỏ
                   </button>
