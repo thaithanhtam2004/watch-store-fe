@@ -7,13 +7,13 @@ import {
     ProductExtraInfo,
     QuantityAndCart
 } from '../elements/ProductElements';
-import { useSanPhamDetail } from '@/hooks/useSanPhamDetail'; // sửa tên import cho đúng
+import { useSanPhamDetail } from '@/hooks/useSanPhamDetail';
 import RelatedProducts from '../elements/RelatedProducts';
 
 const ProductPage = () => {
-    const { id } = useParams(); // id chính là mã sản phẩm trên URL, vd: /sanpham/173723
+    const { id } = useParams();
     const [quantity, setQuantity] = useState(1);
-    const { data: product, loading, error } = useSanPhamDetail(id); // truyền id vào hook
+    const { data: product, loading, error } = useSanPhamDetail(id);
 
     const handleAddToCart = () => {
         console.log(`Thêm ${quantity} sản phẩm vào giỏ: ${product.tensanpham}`);
@@ -27,7 +27,6 @@ const ProductPage = () => {
         <>
             <Header />
             <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-6xl mx-auto px-4 py-8">
-                {/* Cột trái: Ảnh + bảng */}
                 <div className="flex flex-col items-start space-y-6">
                     <ProductImageSlider
                         mainImage={product.hinhanhchinh}
@@ -45,12 +44,13 @@ const ProductPage = () => {
                     }} />
                 </div>
 
-                {/* Cột phải: Thông tin, chọn số lượng, ghi chú */}
                 <div className="space-y-4">
                     <h1 className="text-3xl font-bold">{product.tensanpham}</h1>
-                    <span className="inline-block bg-blue-100 text-blue-700 px-3 py-1 rounded text-sm">
-                        Mã sản phẩm: {product.masanpham}
-                    </span>
+
+                    {/* Giá đơn giản, chữ đen, không có nền hoặc border */}
+                    <div className="text-xl font-semibold text-black">
+                        {product.giaban?.toLocaleString('vi-VN')} đ
+                    </div>
 
                     <QuantityAndCart
                         quantity={quantity}
@@ -65,10 +65,13 @@ const ProductPage = () => {
                     </ul>
                 </div>
             </div>
+
             <div className="max-w-5xl mx-auto px-4 py-8">
                 <ProductExtraInfo />
             </div>
+
             <RelatedProducts products={[]} />
+
             <Footer />
         </>
     );
