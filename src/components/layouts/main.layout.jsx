@@ -4,11 +4,6 @@ import { Link } from "react-router-dom";
 // HEADER
 export const Header = () => (
   <>
-    {/* Thông báo khuyến mãi */}
-    <div className="bg-gray-800 text-white text-center py-2 text-sm font-medium tracking-wide">
-      Nhập mã <strong>QUATANG</strong> giảm ngay 15%
-    </div>
-
     {/* Logo và giỏ hàng */}
     <header className="bg-gray-200 py-4 px-4 sm:px-8 flex justify-center items-center relative shadow">
       <div className="absolute right-4 sm:right-8 flex items-center gap-2">
