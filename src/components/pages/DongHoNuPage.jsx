@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { getDongHoNu } from "@/services/sanphamService";
 import { Header, Footer } from "../layouts/main.layout";
+import { Link } from "react-router-dom";
 
 const PRODUCTS_PER_PAGE = 9;
 
@@ -35,19 +36,26 @@ const DongHoNuPage = () => {
           {currentProducts.map((product) => (
             <div
               key={product.masanpham}
-              className="bg-white rounded-xl shadow hover:shadow-xl transition duration-300 group overflow-hidden"
+              className="bg-white rounded-xl shadow-md hover:shadow-xl transition duration-300 group overflow-hidden"
             >
-              <img
-                src={product.hinhanhchinh}
-                alt={product.tensanpham}
-                className="w-full h-60 object-cover group-hover:scale-105 transition duration-300"
-              />
+              <Link to={`/product/${product.masanpham}`}>
+                <img
+                  src={product.hinhanhchinh || "/fallback.jpg"}
+                  alt={product.tensanpham || "Đồng hồ"}
+                  className="w-full h-60 object-cover transition-transform duration-300 transform group-hover:scale-105 rounded-xl"
+                />
+              </Link>
+
               <div className="p-4">
-                <h2 className="text-lg font-semibold text-gray-800 truncate">
-                  {product.tensanpham}
-                </h2>
+                <Link to={`/product/${product.masanpham}`}>
+                  <h2 className="text-lg font-bold text-gray-700 truncate hover:text-black transition">
+                    {product.tensanpham || "Tên sản phẩm"}
+                  </h2>
+                </Link>
                 <p className="text-red-600 text-xl font-bold mt-1">
-                  {product.giaban.toLocaleString()} ₫
+                  {product.giaban
+                    ? Number(product.giaban).toLocaleString() + " ₫"
+                    : "Giá đang cập nhật"}
                 </p>
                 <button className="mt-3 w-full bg-gray-800 text-white py-2 rounded-lg hover:bg-gray-700 transition">
                   Thêm vào giỏ
@@ -58,35 +66,37 @@ const DongHoNuPage = () => {
         </div>
 
         {/* Pagination */}
-        <div className="flex justify-center mt-8 space-x-2">
-          <button
-            onClick={() => changePage(currentPage - 1)}
-            disabled={currentPage === 1}
-            className="px-3 py-1 border rounded disabled:opacity-50 hover:bg-gray-200"
-          >
-            &lt;
-          </button>
-          {Array.from({ length: totalPages }, (_, i) => (
+        {totalPages > 1 && (
+          <div className="flex justify-center mt-8 space-x-2">
             <button
-              key={i + 1}
-              onClick={() => changePage(i + 1)}
-              className={`w-8 h-8 rounded-full border text-sm font-medium ${
-                currentPage === i + 1
-                  ? "bg-gray-800 text-white"
-                  : "hover:bg-gray-200"
-              }`}
+              onClick={() => changePage(currentPage - 1)}
+              disabled={currentPage === 1}
+              className="px-3 py-1 border rounded disabled:opacity-50 hover:bg-gray-200"
             >
-              {i + 1}
+              &lt;
             </button>
-          ))}
-          <button
-            onClick={() => changePage(currentPage + 1)}
-            disabled={currentPage === totalPages}
-            className="px-3 py-1 border rounded disabled:opacity-50 hover:bg-gray-200"
-          >
-            &gt;
-          </button>
-        </div>
+            {Array.from({ length: totalPages }, (_, i) => (
+              <button
+                key={i + 1}
+                onClick={() => changePage(i + 1)}
+                className={`w-8 h-8 rounded-full border text-sm font-medium ${
+                  currentPage === i + 1
+                    ? "bg-gray-800 text-white"
+                    : "hover:bg-gray-200"
+                }`}
+              >
+                {i + 1}
+              </button>
+            ))}
+            <button
+              onClick={() => changePage(currentPage + 1)}
+              disabled={currentPage === totalPages}
+              className="px-3 py-1 border rounded disabled:opacity-50 hover:bg-gray-200"
+            >
+              &gt;
+            </button>
+          </div>
+        )}
       </div>
       <Footer />
     </>
