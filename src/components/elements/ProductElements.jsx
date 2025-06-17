@@ -39,7 +39,8 @@ import React, { useState } from 'react';
 
 export const ProductImageSlider = ({ mainImage, subImages }) => {
     const [currentIndex, setCurrentIndex] = useState(0);
-    const allImages = [mainImage, ...subImages];
+   const allImages = ['https://i.ibb.co/KxzzTJdG/1.jpg', ...(subImages || [])];
+
 
     const next = () => setCurrentIndex((currentIndex + 1) % allImages.length);
     const prev = () => setCurrentIndex((currentIndex - 1 + allImages.length) % allImages.length);

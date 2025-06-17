@@ -46,3 +46,14 @@ export const deleteSanPham = async (masanpham) => {
   });
   return response.data;
 };
+
+
+export const getSanPhamDetail = async (masanpham) => {
+  const response = await axios.get(`${API_BASE}/${masanpham}/detail`);
+  return response.data.data;
+};
+
+export const getGiaBanSanPham = async (masanpham) => {
+  const response = await axios.get(`${API_BASE}/giaban/${masanpham}`);
+  return response.data;
+};
