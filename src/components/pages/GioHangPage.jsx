@@ -3,45 +3,73 @@ import { Header, Footer } from "../layouts/main.layout";
 import { useGioHang } from "../../hooks/useGioHang";
 import { getGiaBanSanPham } from "../../services/sanphamService";
 import { useNavigate } from "react-router-dom";
-
-const CURRENT_USER_ID = "tk001";
+import { useAuth } from "../../utils/AuthContext";
 
 const CartPage = () => {
-  const { gioHang, loading, error } = useGioHang(CURRENT_USER_ID);
-  const [giaSanPhamMap, setGiaSanPhamMap] = useState({});
-  const navigate = useNavigate(); // ✅ Khai báo navigate
+  const { user } = useAuth();
+  const [checkingAuth, setCheckingAuth] = useState(true);
+  const navigate = useNavigate();
 
+  // Khi user được load (cả null hoặc object), tắt checkingAuth
+  useEffect(() => {
+    if (user !== undefined) {
+      setCheckingAuth(false);
+    }
+  }, [user]);
+
+  // Lấy id user, nếu chưa có thì truyền null
+  const CURRENT_USER_ID = user?.id || null;
+
+  // Gọi hook useGioHang ngay đầu component, truyền id user (có thể là null)
+  // Bên trong hook phải xử lý trường hợp null tránh gọi API
+  const { gioHang = [], loading, error } = useGioHang(CURRENT_USER_ID);
+
+  const [giaSanPhamMap, setGiaSanPhamMap] = useState({});
+
+  // Hàm format tiền VND
   const formatVND = (amount) =>
     amount?.toLocaleString("vi-VN", { style: "currency", currency: "VND" });
 
+  // Lấy giá bán cho từng sản phẩm trong giỏ hàng
   useEffect(() => {
     const fetchAllGiaBan = async () => {
-      const map = {};
-      for (const item of gioHang) {
-        try {
-          const res = await getGiaBanSanPham(item.masanpham);
+      try {
+        const results = await Promise.all(
+          gioHang.map((item) => getGiaBanSanPham(item.masanpham))
+        );
+
+        const map = {};
+        results.forEach((res, index) => {
           const giaban = parseFloat(res.giaban);
-          map[item.masanpham] = {
+          const masanpham = gioHang[index].masanpham;
+          map[masanpham] = {
             giaban: isNaN(giaban) ? 0 : giaban,
             tensanpham: res.tensanpham || "Không rõ tên",
           };
-        } catch (e) {
-          console.error("Lỗi lấy giá cho mã:", item.masanpham, e);
-          map[item.masanpham] = { giaban: 0, tensanpham: "Lỗi tên" };
-        }
+        });
+
+        setGiaSanPhamMap(map);
+      } catch (e) {
+        console.error("Lỗi lấy giá sản phẩm:", e);
+        setGiaSanPhamMap({}); // Reset nếu lỗi
       }
-      setGiaSanPhamMap(map);
     };
 
     if (gioHang.length > 0) {
       fetchAllGiaBan();
+    } else {
+      setGiaSanPhamMap({});
     }
   }, [gioHang]);
 
+  // Tính tổng tiền giỏ hàng
   const tongTien = gioHang.reduce((sum, item) => {
     const info = giaSanPhamMap[item.masanpham] || { giaban: 0 };
     return sum + info.giaban * item.soluong;
   }, 0);
+
+  if (checkingAuth) return <p>Đang tải thông tin người dùng...</p>;
+  if (!user) return <p>Vui lòng đăng nhập</p>;
 
   return (
     <div className="font-sans text-sm">
@@ -80,9 +108,7 @@ const CartPage = () => {
                       <tr key={sp.magiohang}>
                         <td className="border px-4 py-2">{info.tensanpham}</td>
                         <td className="border px-4 py-2">{sp.soluong}</td>
-                        <td className="border px-4 py-2">
-                          {formatVND(info.giaban)}
-                        </td>
+                        <td className="border px-4 py-2">{formatVND(info.giaban)}</td>
                         <td className="border px-4 py-2">
                           {formatVND(info.giaban * sp.soluong)}
                         </td>
@@ -114,7 +140,7 @@ const CartPage = () => {
               />
             </div>
             <button
-              onClick={() => navigate("/checkout")} // ✅ Điều hướng đến CheckoutPage
+              onClick={() => navigate("/checkout")}
               className="w-full bg-black text-white py-2 rounded hover:bg-gray-800"
             >
               Tiến hành thanh toán
