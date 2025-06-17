@@ -19,11 +19,14 @@ const CartPage = () => {
       for (const item of gioHang) {
         try {
           const res = await getGiaBanSanPham(item.masanpham);
-          const giaban = parseFloat(res.giaban); // ✅ Đảm bảo chuyển về số
-          map[item.masanpham] = isNaN(giaban) ? 0 : giaban;
+          const giaban = parseFloat(res.giaban);
+          map[item.masanpham] = {
+            giaban: isNaN(giaban) ? 0 : giaban,
+            tensanpham: res.tensanpham || "Không rõ tên",
+          };
         } catch (e) {
           console.error("Lỗi lấy giá cho mã:", item.masanpham, e);
-          map[item.masanpham] = 0;
+          map[item.masanpham] = { giaban: 0, tensanpham: "Lỗi tên" };
         }
       }
       setGiaSanPhamMap(map);
@@ -35,8 +38,8 @@ const CartPage = () => {
   }, [gioHang]);
 
   const tongTien = gioHang.reduce((sum, item) => {
-    const giaban = giaSanPhamMap[item.masanpham] || 0;
-    return sum + giaban * item.soluong;
+    const info = giaSanPhamMap[item.masanpham] || { giaban: 0 };
+    return sum + info.giaban * item.soluong;
   }, 0);
 
   return (
@@ -60,7 +63,7 @@ const CartPage = () => {
               <table className="w-full border border-gray-200">
                 <thead className="bg-gray-100">
                   <tr>
-                    <th className="border px-4 py-2">Mã sản phẩm</th>
+                    <th className="border px-4 py-2">Tên sản phẩm</th>
                     <th className="border px-4 py-2">Số lượng</th>
                     <th className="border px-4 py-2">Giá</th>
                     <th className="border px-4 py-2">Tổng</th>
@@ -68,16 +71,19 @@ const CartPage = () => {
                 </thead>
                 <tbody>
                   {gioHang.map((sp) => {
-                    const giaban = giaSanPhamMap[sp.masanpham] || 0;
+                    const info = giaSanPhamMap[sp.masanpham] || {
+                      giaban: 0,
+                      tensanpham: "...",
+                    };
                     return (
                       <tr key={sp.magiohang}>
-                        <td className="border px-4 py-2">{sp.masanpham}</td>
+                        <td className="border px-4 py-2">{info.tensanpham}</td>
                         <td className="border px-4 py-2">{sp.soluong}</td>
                         <td className="border px-4 py-2">
-                          {formatVND(giaban)}
+                          {formatVND(info.giaban)}
                         </td>
                         <td className="border px-4 py-2">
-                          {formatVND(giaban * sp.soluong)}
+                          {formatVND(info.giaban * sp.soluong)}
                         </td>
                       </tr>
                     );
