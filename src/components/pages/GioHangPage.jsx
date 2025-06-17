@@ -1,14 +1,15 @@
-// src/pages/CartPage.jsx
 import React, { useEffect, useState } from "react";
 import { Header, Footer } from "../layouts/main.layout";
 import { useGioHang } from "../../hooks/useGioHang";
 import { getGiaBanSanPham } from "../../services/sanphamService";
+import { useNavigate } from "react-router-dom"; // ✅ Thêm dòng này
 
-const CURRENT_USER_ID = "ce0b7418-825b-468c-ad56-44e59da291f3";
+const CURRENT_USER_ID = "tk001";
 
 const CartPage = () => {
   const { gioHang, loading, error } = useGioHang(CURRENT_USER_ID);
   const [giaSanPhamMap, setGiaSanPhamMap] = useState({});
+  const navigate = useNavigate(); // ✅ Khai báo navigate
 
   const formatVND = (amount) =>
     amount?.toLocaleString("vi-VN", { style: "currency", currency: "VND" });
@@ -19,7 +20,7 @@ const CartPage = () => {
       for (const item of gioHang) {
         try {
           const res = await getGiaBanSanPham(item.masanpham);
-          const giaban = parseFloat(res.giaban); // ✅ Đảm bảo chuyển về số
+          const giaban = parseFloat(res.giaban);
           map[item.masanpham] = isNaN(giaban) ? 0 : giaban;
         } catch (e) {
           console.error("Lỗi lấy giá cho mã:", item.masanpham, e);
@@ -106,7 +107,10 @@ const CartPage = () => {
                 placeholder="Nhập mã ưu tiên"
               />
             </div>
-            <button className="w-full bg-black text-white py-2 rounded hover:bg-gray-800">
+            <button
+              onClick={() => navigate("/checkout")} // ✅ Điều hướng đến CheckoutPage
+              className="w-full bg-black text-white py-2 rounded hover:bg-gray-800"
+            >
               Tiến hành thanh toán
             </button>
           </div>
