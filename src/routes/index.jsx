@@ -1,4 +1,3 @@
-
 import React from "react";
 import { Route, Routes } from "react-router-dom";
 import HomePage from "@/components/pages/HomePage";
@@ -8,9 +7,15 @@ import AdminPage from "../components/pages/AdminPage";
 import BestsellerPage from "@/components/pages/BestsellerPage";
 import DongHoNamPage from "@/components/pages/DongHoNamPage";
 import DongHoNuPage from "@/components/pages/DongHoNuPage";
+
+import ProductDetail from "@/components/pages/ProductDetail";
+import ProductLayout from "@/components/layouts/ProductLayout"; // Import tại đây
+import CheckoutPage from "@/components/pages/CheckoutPage";
+
 import ProductDetail from '@/components/pages/ProductDetail';
 import ProductLayout from '@/components/layouts/ProductLayout'; // Import tại đây
 import GioHangPage from '@/components/pages/GioHangPage';
+
 
 const AppRoutes = () => (
   <Routes>
@@ -26,7 +31,7 @@ const AppRoutes = () => (
     <Route path="/product" element={<ProductLayout />}>
       <Route path=":id" element={<ProductDetail />} />
     </Route>
-
+    <Route path="/checkout" element={<CheckoutPage />} />
   </Routes>
 );
 
