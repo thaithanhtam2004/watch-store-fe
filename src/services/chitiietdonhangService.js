@@ -13,7 +13,7 @@ export const createChiTietDonHang = async ({ madonhang, masanpham, soluong, giab
 // 📋 Lấy tất cả chi tiết đơn hàng
 export const getAllChiTietDonHang = async () => {
   const response = await axios.get(`${API_BASE}`, { withCredentials: true });
-  return response.data.duLieu; // giả định server trả về { duLieu: [...] }
+  return response.data.duLieu;
 };
 
 // 🔍 Lấy chi tiết đơn hàng theo mã chi tiết
@@ -37,5 +37,15 @@ export const updateChiTietDonHang = async (id, data) => {
 // ❌ Xóa chi tiết đơn hàng
 export const deleteChiTietDonHang = async (id) => {
   const response = await axios.delete(`${API_BASE}/delete/${id}`, { withCredentials: true });
+  return response.data;
+};
+
+// 🛒 Chuyển sản phẩm đã chọn từ giỏ hàng sang chi tiết đơn hàng
+export const chuyenTuGioHangSangChiTiet = async ({ mataikhoan, madonhang, selectedItems }) => {
+  const response = await axios.post(`${API_BASE}/chuyen-tu-giohang`, {
+    mataikhoan,
+    madonhang,
+    selectedItems
+  }, { withCredentials: true });
   return response.data;
 };
