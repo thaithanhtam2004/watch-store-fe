@@ -1,25 +1,54 @@
 import React from "react";
 import { Link } from "react-router-dom";
+import { useState, useEffect } from "react";
+
 import { useAuth } from "../../utils/AuthContext";
 import { FaUserCircle } from "react-icons/fa";
 // HEADER
 export const Header = () => {
   const { user, logout } = useAuth();
+  const [cartCount, setCartCount] = useState(0);
+
+  const fetchCartCount = async () => {
+    if (user?.id) {
+      try {
+        const data = await useGioHang(user.id);
+        const total = data.reduce((sum, item) => sum + item.soluong, 0);
+        setCartCount(total);
+      } catch (err) {
+        console.error("Lỗi lấy giỏ hàng:", err);
+        setCartCount(0);
+      }
+    } else {
+      setCartCount(0);
+    }
+  };
+
+  useEffect(() => {
+    fetchCartCount();
+
+    const handleCartUpdate = () => {
+      fetchCartCount();
+    };
+
+    window.addEventListener("cart-updated", handleCartUpdate);
+    return () => {
+      window.removeEventListener("cart-updated", handleCartUpdate);
+    };
+  }, [user]);
+
   return (
     <>
-      {/* Header chính */}
       <header className="bg-gray-200 py-4 px-4 sm:px-8 flex items-center justify-between relative shadow">
         <div className="flex items-center gap-2">
           {user ? (
-            <div className="flex items-center gap-2">
-              <button
-                onClick={logout}
-                className="flex items-center border border-black text-black px-3 py-1 rounded-full hover:bg-black hover:text-white transition"
-              >
-                <span className="text-sm font-semibold mr-2">Log out</span>
-                <FaUserCircle className="text-xl" />
-              </button>
-            </div>
+            <button
+              onClick={logout}
+              className="flex items-center border border-black text-black px-3 py-1 rounded-full hover:bg-black hover:text-white transition"
+            >
+              <span className="text-sm font-semibold mr-2">Log out</span>
+              <FaUserCircle className="text-xl" />
+            </button>
           ) : (
             <Link
               to="/login"
@@ -31,19 +60,23 @@ export const Header = () => {
           )}
         </div>
 
-        {/* Logo trung tâm */}
+        {/* Logo */}
         <div className="text-2xl font-bold tracking-widest text-gray-900 text-center absolute left-1/2 transform -translate-x-1/2">
           WATCH AURA
         </div>
 
-        {/* Bên phải: Giỏ hàng */}
-        <div className="flex items-center gap-2">
+        {/* Cart */}
+        <Link
+          to="/cart"
+          className="flex items-center gap-2 hover:opacity-80 transition"
+        >
           <span className="text-sm font-medium text-gray-700">
-            GIỎ HÀNG / 0
+            GIỎ HÀNG / {cartCount}
           </span>
           <img src="/giohang.png" alt="Cart" className="w-6 h-6" />
-        </div>
+        </Link>
       </header>
+
       {/* Navigation */}
       <nav className="bg-white flex flex-wrap justify-center gap-4 sm:gap-6 border-b py-3 text-sm sm:text-base font-semibold uppercase text-gray-800">
         <Link to="/" className="hover:underline hover:text-gray-600 transition">
@@ -82,9 +115,39 @@ export const Footer = () => (
       </div>
       <div>
         <h4 className="font-bold mb-2 text-gray-900">KẾT NỐI</h4>
-        <p>- Fanpage: WATCH AURA SG</p>
-        <p>- Instagram: watchaura.store</p>
-        <p>- Zalo: WatchAura</p>
+        <p>
+          - Fanpage:{" "}
+          <a
+            href="https://facebook.com/watchaurasg"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-blue-500 hover:underline"
+          >
+            WATCH AURA SG
+          </a>
+        </p>
+        <p>
+          - Instagram:{" "}
+          <a
+            href="https://instagram.com/watchaura.store"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-pink-500 hover:underline"
+          >
+            @watchaura.store
+          </a>
+        </p>
+        <p>
+          - Zalo:{" "}
+          <a
+            href="https://zalo.me"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-blue-400 hover:underline"
+          >
+            WatchAura
+          </a>
+        </p>
       </div>
       <div>
         <h4 className="font-bold mb-2 text-gray-900">VẬN CHUYỂN</h4>
