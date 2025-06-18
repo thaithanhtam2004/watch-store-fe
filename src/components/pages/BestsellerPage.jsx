@@ -2,12 +2,15 @@ import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { getBestsellerProducts } from "@/services/sanphamService";
 import { Header, Footer } from "../layouts/main.layout";
+import { useAuth } from "@/utils/AuthContext";
+import { themVaoGioHang } from "@/services/giohangService";
 
 const PRODUCTS_PER_PAGE = 9;
 
 const BestsellerPage = () => {
   const [products, setProducts] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
+  const { user } = useAuth();
 
   useEffect(() => {
     getBestsellerProducts().then(setProducts).catch(console.error);
@@ -22,6 +25,28 @@ const BestsellerPage = () => {
 
   const changePage = (page) => {
     if (page >= 1 && page <= totalPages) setCurrentPage(page);
+  };
+
+  const handleAddToCart = async (product) => {
+    if (!user) {
+      alert("Vui lòng đăng nhập để thêm sản phẩm vào giỏ hàng.");
+      return;
+    }
+
+    try {
+      await themVaoGioHang({
+        mataikhoan: user.id,
+        masanpham: product.masanpham,
+        soluong: 1,
+      });
+
+      // Gửi sự kiện cập nhật header
+      window.dispatchEvent(new Event("cart-updated"));
+      alert("Đã thêm vào giỏ hàng!");
+    } catch (error) {
+      console.error("Lỗi khi thêm sản phẩm vào giỏ:", error);
+      alert("Không thể thêm vào giỏ hàng.");
+    }
   };
 
   return (
@@ -60,7 +85,10 @@ const BestsellerPage = () => {
                       : "Giá đang cập nhật"}
                   </p>
 
-                  <button className="mt-3 w-full bg-gray-800 text-white py-2 rounded-lg hover:bg-gray-700 transition">
+                  <button
+                    onClick={() => handleAddToCart(product)}
+                    className="mt-3 w-full bg-gray-800 text-white py-2 rounded-lg hover:bg-gray-700 transition"
+                  >
                     Thêm vào giỏ
                   </button>
                 </div>

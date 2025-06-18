@@ -1,18 +1,20 @@
 import React, { useEffect, useState } from "react";
 import { getDongHoNam } from "@/services/sanphamService";
+import { themVaoGioHang } from "@/services/gioHangService"; // 👈 Thêm dòng này
 import { Header, Footer } from "../layouts/main.layout";
-import { Link } from "react-router-dom"; // 👈 Thêm dòng này
+import { Link } from "react-router-dom";
+import { useAuth } from "../../utils/AuthContext"; // 👈 Thêm dòng này
 
 const PRODUCTS_PER_PAGE = 9;
 
 const DongHoNamPage = () => {
   const [products, setProducts] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
+  const { user } = useAuth(); // 👈 Lấy thông tin user
 
   useEffect(() => {
     getDongHoNam()
       .then((data) => {
-        console.log("DATA GET:", data);
         setProducts(data);
       })
       .catch(console.error);
@@ -27,6 +29,26 @@ const DongHoNamPage = () => {
 
   const changePage = (page) => {
     if (page >= 1 && page <= totalPages) setCurrentPage(page);
+  };
+  const handleAddToCart = async (masanpham) => {
+    if (!user) {
+      alert("Vui lòng đăng nhập để thêm sản phẩm vào giỏ hàng.");
+      return;
+    }
+
+    try {
+      await themVaoGioHang({
+        mataikhoan: user.id,
+        masanpham,
+        soluong: 1,
+      });
+
+      window.dispatchEvent(new Event("cart-updated"));
+      alert("Đã thêm vào giỏ hàng!");
+    } catch (err) {
+      console.error("Lỗi thêm vào giỏ:", err);
+      alert("Không thể thêm sản phẩm vào giỏ hàng.");
+    }
   };
 
   return (
@@ -44,7 +66,6 @@ const DongHoNamPage = () => {
                 key={product.masanpham}
                 className="bg-white rounded-xl shadow hover:shadow-xl transition duration-300 group overflow-hidden"
               >
-                {/* 👇 Bọc ảnh trong Link */}
                 <Link to={`/product/${product.masanpham}`}>
                   <img
                     src={product.hinhanhchinh || "/fallback.jpg"}
@@ -53,7 +74,6 @@ const DongHoNamPage = () => {
                   />
                 </Link>
                 <div className="p-4">
-                  {/* 👇 Bọc tiêu đề trong Link */}
                   <Link to={`/product/${product.masanpham}`}>
                     <h2 className="text-lg font-semibold text-gray-800 truncate hover:text-black">
                       {product.tensanpham || "Tên sản phẩm"}
@@ -64,7 +84,10 @@ const DongHoNamPage = () => {
                       ? Number(product.giaban).toLocaleString() + " ₫"
                       : "Giá đang cập nhật"}
                   </p>
-                  <button className="mt-3 w-full bg-gray-800 text-white py-2 rounded-lg hover:bg-gray-700 transition">
+                  <button
+                    onClick={() => handleAddToCart(product.masanpham)}
+                    className="mt-3 w-full bg-gray-800 text-white py-2 rounded-lg hover:bg-gray-700 transition"
+                  >
                     Thêm vào giỏ
                   </button>
                 </div>

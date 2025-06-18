@@ -1,28 +1,27 @@
-import { useEffect, useState } from "react";
-import { getGioHangByTaiKhoan } from "../services/giohangService"; // Đường dẫn service đúng
+import { useEffect, useState, useCallback } from "react";
+import { getGioHangByTaiKhoan } from "../services/giohangService";
 
 export const useGioHang = (mataikhoan) => {
   const [gioHang, setGioHang] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
-  useEffect(() => {
+  const fetchGioHang = useCallback(async () => {
     if (!mataikhoan) return;
-
-    const fetchGioHang = async () => {
-      try {
-        setLoading(true);
-        const result = await getGioHangByTaiKhoan(mataikhoan);
-        setGioHang(result); // tuỳ theo kết quả trả về
-      } catch (err) {
-        setError(err);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchGioHang();
+    try {
+      setLoading(true);
+      const result = await getGioHangByTaiKhoan(mataikhoan);
+      setGioHang(result || []); // fallback nếu null
+    } catch (err) {
+      setError(err);
+    } finally {
+      setLoading(false);
+    }
   }, [mataikhoan]);
 
-  return { gioHang, loading, error };
+  useEffect(() => {
+    fetchGioHang();
+  }, [fetchGioHang]);
+
+  return { gioHang, loading, error, refetch: fetchGioHang };
 };

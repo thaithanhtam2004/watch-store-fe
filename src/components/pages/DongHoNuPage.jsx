@@ -1,13 +1,16 @@
 import React, { useEffect, useState } from "react";
 import { getDongHoNu } from "@/services/sanphamService";
+import { themVaoGioHang } from "@/services/gioHangService"; // 👈 Thêm
 import { Header, Footer } from "../layouts/main.layout";
 import { Link } from "react-router-dom";
+import { useAuth } from "../../utils/AuthContext"; // 👈 Thêm
 
 const PRODUCTS_PER_PAGE = 9;
 
 const DongHoNuPage = () => {
   const [products, setProducts] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
+  const { user } = useAuth(); // 👈 Lấy user
 
   useEffect(() => {
     getDongHoNu().then(setProducts).catch(console.error);
@@ -24,6 +27,27 @@ const DongHoNuPage = () => {
     if (page >= 1 && page <= totalPages) setCurrentPage(page);
   };
 
+  const handleAddToCart = async (masanpham) => {
+    if (!user) {
+      alert("Vui lòng đăng nhập để thêm sản phẩm vào giỏ hàng.");
+      return;
+    }
+
+    try {
+      await themVaoGioHang({
+        mataikhoan: user.id,
+        masanpham,
+        soluong: 1,
+      });
+
+      window.dispatchEvent(new Event("cart-updated"));
+      alert("Đã thêm vào giỏ hàng!");
+    } catch (err) {
+      console.error("Lỗi thêm vào giỏ:", err);
+      alert("Không thể thêm sản phẩm vào giỏ hàng.");
+    }
+  };
+
   return (
     <>
       <Header />
@@ -33,36 +57,45 @@ const DongHoNuPage = () => {
         </h2>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-          {currentProducts.map((product) => (
-            <div
-              key={product.masanpham}
-              className="bg-white rounded-xl shadow-md hover:shadow-xl transition duration-300 group overflow-hidden"
-            >
-              <Link to={`/product/${product.masanpham}`}>
-                <img
-                  src={product.hinhanhchinh || "/fallback.jpg"}
-                  alt={product.tensanpham || "Đồng hồ"}
-                  className="w-full h-60 object-cover transition-transform duration-300 transform group-hover:scale-105 rounded-xl"
-                />
-              </Link>
-
-              <div className="p-4">
+          {currentProducts.length > 0 ? (
+            currentProducts.map((product) => (
+              <div
+                key={product.masanpham}
+                className="bg-white rounded-xl shadow-md hover:shadow-xl transition duration-300 group overflow-hidden"
+              >
                 <Link to={`/product/${product.masanpham}`}>
-                  <h2 className="text-lg font-bold text-gray-700 truncate hover:text-black transition">
-                    {product.tensanpham || "Tên sản phẩm"}
-                  </h2>
+                  <img
+                    src={product.hinhanhchinh || "/fallback.jpg"}
+                    alt={product.tensanpham || "Đồng hồ"}
+                    className="w-full h-60 object-cover transition-transform duration-300 transform group-hover:scale-105 rounded-xl"
+                  />
                 </Link>
-                <p className="text-red-600 text-xl font-bold mt-1">
-                  {product.giaban
-                    ? Number(product.giaban).toLocaleString() + " ₫"
-                    : "Giá đang cập nhật"}
-                </p>
-                <button className="mt-3 w-full bg-gray-800 text-white py-2 rounded-lg hover:bg-gray-700 transition">
-                  Thêm vào giỏ
-                </button>
+
+                <div className="p-4">
+                  <Link to={`/product/${product.masanpham}`}>
+                    <h2 className="text-lg font-bold text-gray-700 truncate hover:text-black transition">
+                      {product.tensanpham || "Tên sản phẩm"}
+                    </h2>
+                  </Link>
+                  <p className="text-red-600 text-xl font-bold mt-1">
+                    {product.giaban
+                      ? Number(product.giaban).toLocaleString() + " ₫"
+                      : "Giá đang cập nhật"}
+                  </p>
+                  <button
+                    onClick={() => handleAddToCart(product.masanpham)}
+                    className="mt-3 w-full bg-gray-800 text-white py-2 rounded-lg hover:bg-gray-700 transition"
+                  >
+                    Thêm vào giỏ
+                  </button>
+                </div>
               </div>
-            </div>
-          ))}
+            ))
+          ) : (
+            <p className="col-span-full text-center text-gray-500">
+              Không có sản phẩm nào.
+            </p>
+          )}
         </div>
 
         {/* Pagination */}
