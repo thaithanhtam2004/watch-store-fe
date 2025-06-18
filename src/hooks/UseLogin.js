@@ -7,7 +7,6 @@ export function useLogin() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const { login: contextLogin } = useAuth(); // lấy hàm login từ context
-
   const login = async (email, password) => {
     setLoading(true);
     setError(null);
@@ -16,23 +15,24 @@ export function useLogin() {
       const data = await loginRequest(email, password);
 
       if (data.thanhcong) {
-        // Lưu token vào localStorage
         localStorage.setItem("token", data.token);
-        // Gọi login của context để decode và setUser
         contextLogin(data.token);
         alert("Đăng nhập thành công!");
+        return true; // ✅ trả về thành công
       } else {
         setError("Tài khoản hoặc mật khẩu không đúng");
         alert("Đăng nhập thất bại!");
+        return false;
       }
     } catch (err) {
-  // ✅ Bắt riêng lỗi 401
-  if (err.response?.status === 401) {
-    setError("Tài khoản hoặc mật khẩu không đúng");
-  } else {
-    const message = err.response?.data?.message || err.message || "Đăng nhập thất bại";
-    setError(message);
-  }
+      if (err.response?.status === 401) {
+        setError("Tài khoản hoặc mật khẩu không đúng");
+      } else {
+        const message =
+          err.response?.data?.message || err.message || "Đăng nhập thất bại";
+        setError(message);
+      }
+      return false; // ✅ trả về thất bại
     } finally {
       setLoading(false);
     }
