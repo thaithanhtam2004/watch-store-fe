@@ -87,6 +87,7 @@ const CartPage = () => {
     try {
       await xoaKhoiGioHang(magiohang);
       refetch();
+      window.dispatchEvent(new Event("cart-updated"));
     } catch (e) {
       alert("Xoá thất bại!");
       console.error(e);

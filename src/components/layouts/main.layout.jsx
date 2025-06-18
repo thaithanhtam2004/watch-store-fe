@@ -1,9 +1,10 @@
 import React from "react";
 import { Link } from "react-router-dom";
 import { useState, useEffect } from "react";
-
+import { useGioHang } from "@/hooks/useGioHang";
 import { useAuth } from "../../utils/AuthContext";
 import { FaUserCircle } from "react-icons/fa";
+import { getGioHangByTaiKhoan } from "@/services/giohangService";
 // HEADER
 export const Header = () => {
   const { user, logout } = useAuth();
@@ -12,7 +13,7 @@ export const Header = () => {
   const fetchCartCount = async () => {
     if (user?.id) {
       try {
-        const data = await useGioHang(user.id);
+        const data = await getGioHangByTaiKhoan(user.id);
         const total = data.reduce((sum, item) => sum + item.soluong, 0);
         setCartCount(total);
       } catch (err) {
