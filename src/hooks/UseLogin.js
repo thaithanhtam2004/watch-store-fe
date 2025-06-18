@@ -20,13 +20,19 @@ export function useLogin() {
         localStorage.setItem("token", data.token);
         // Gọi login của context để decode và setUser
         contextLogin(data.token);
+        alert("Đăng nhập thành công!");
       } else {
         setError("Tài khoản hoặc mật khẩu không đúng");
+        alert("Đăng nhập thất bại!");
       }
     } catch (err) {
-      const message =
-        err.response?.data?.message || err.message || "Đăng nhập thất bại";
-      setError(message);
+  // ✅ Bắt riêng lỗi 401
+  if (err.response?.status === 401) {
+    setError("Tài khoản hoặc mật khẩu không đúng");
+  } else {
+    const message = err.response?.data?.message || err.message || "Đăng nhập thất bại";
+    setError(message);
+  }
     } finally {
       setLoading(false);
     }
