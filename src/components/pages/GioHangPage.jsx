@@ -59,28 +59,56 @@ const CartPage = () => {
     );
   };
 
-  const items = gioHang
-    .filter((sp) => selectedItems.includes(sp.magiohang))
-    .map((sp) => ({
+const items = gioHang
+  .filter((sp) => selectedItems.includes(sp.magiohang))
+  .map((sp) => {
+    const giaban = giaSanPhamMap[sp.masanpham]?.giaban || 0;
+    return {
       masanpham: sp.masanpham,
       soluong: sp.soluong,
-    }));
+      giaban: giaban,
+    };
+  });
 
   const tongTien = items.reduce((sum, item) => {
     const giaban = giaSanPhamMap[item.masanpham]?.giaban || 0;
     return sum + giaban * item.soluong;
   }, 0);
 
-  const handleTaoDonHang = () => {
-    if (items.length === 0) return alert("Chưa chọn sản phẩm nào.");
-    const donHangData = {
-      mataikhoan: CURRENT_USER_ID,
-      items,
-      tongtien: tongTien,
+const handleTaoDonHang = () => {
+  // Lọc sản phẩm được chọn (chỉ lấy từ selectedItems)
+  const selected = gioHang.filter((sp) => selectedItems.includes(sp.magiohang));
+
+  if (selected.length === 0) {
+    alert("Chưa chọn sản phẩm nào.");
+    return;
+  }
+
+  // Tạo danh sách item đúng định dạng
+  const items = selected.map((sp) => {
+    const giaban = giaSanPhamMap[sp.masanpham]?.giaban || 0;
+    return {
+      masanpham: sp.masanpham,
+      soluong: sp.soluong,
+      giaban: giaban,
     };
-    localStorage.setItem("tao_don_hang_data", JSON.stringify(donHangData));
-    navigate("/xac-nhan-don-hang");
+  });
+
+  // Tính tổng tiền
+  const tongTien = items.reduce((sum, item) => sum + item.giaban * item.soluong, 0);
+
+  const donHangData = {
+    mataikhoan: CURRENT_USER_ID,
+    items,
+    tongtien: tongTien,
   };
+
+  // ✅ Ghi đúng sản phẩm được chọn vào localStorage
+  localStorage.setItem("tao_don_hang_data", JSON.stringify(donHangData));
+
+  // ✅ Điều hướng sang trang checkout
+  navigate("/checkout");
+};
 
   const handleXoa = async (magiohang) => {
     if (!window.confirm("Bạn có chắc muốn xoá sản phẩm này?")) return;
