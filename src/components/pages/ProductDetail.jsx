@@ -9,31 +9,33 @@ import {
 } from "../elements/ProductElements";
 import { useSanPhamDetail } from "@/hooks/useSanPhamDetail";
 import RelatedProducts from "../elements/RelatedProducts";
-
+import { useAuth } from "@/utils/AuthContext";
+import { themVaoGioHang } from "@/services/giohangService";
 const ProductPage = () => {
+  const { user } = useAuth();
   const { id } = useParams();
   const [quantity, setQuantity] = useState(1);
   const { data: product, loading, error } = useSanPhamDetail(id);
 
-  const handleAddToCart = () => {
-    const cart = JSON.parse(localStorage.getItem("cart")) || [];
-
-    const index = cart.findIndex((item) => item.id === product.masanpham);
-    if (index !== -1) {
-      cart[index].quantity += quantity;
-    } else {
-      cart.push({
-        id: product.masanpham,
-        tensanpham: product.tensanpham,
-        giaban: product.giaban,
-        hinhanh: product.hinhanhchinh,
-        quantity: quantity,
-      });
+  const handleAddToCart = async () => {
+    if (!user) {
+      alert("Vui lòng đăng nhập để thêm sản phẩm vào giỏ hàng.");
+      return;
     }
 
-    localStorage.setItem("cart", JSON.stringify(cart));
-    window.dispatchEvent(new Event("cart-updated")); // 👈 Dòng này giúp Header cập nhật giỏ hàng
-    alert("Đã thêm vào giỏ hàng!");
+    try {
+      await themVaoGioHang({
+        mataikhoan: user.id,
+        masanpham: product.masanpham,
+        soluong: quantity,
+      });
+
+      window.dispatchEvent(new Event("cart-updated"));
+      alert("Đã thêm vào giỏ hàng!");
+    } catch (error) {
+      console.error("Lỗi khi thêm vào giỏ:", error);
+      alert("Không thể thêm vào giỏ hàng.");
+    }
   };
 
   if (loading)
