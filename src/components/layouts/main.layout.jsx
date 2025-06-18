@@ -1,47 +1,76 @@
 import React from "react";
 import { Link } from "react-router-dom";
-
+import { useAuth } from "../../utils/AuthContext";
+import { FaUserCircle } from "react-icons/fa";
 // HEADER
-export const Header = () => (
-  <>
-    {/* Logo và giỏ hàng */}
-    <header className="bg-gray-200 py-4 px-4 sm:px-8 flex justify-center items-center relative shadow">
-      <div className="absolute right-4 sm:right-8 flex items-center gap-2">
-        <span className="text-sm font-medium text-gray-700">GIỎ HÀNG / 0</span>
-        <img src="/giohang.png" alt="Cart" className="w-6 h-6" />
-      </div>
-      <div className="text-2xl font-bold tracking-widest text-gray-900 text-center">
-        WATCH AURA
-      </div>
-    </header>
+export const Header = () => {
+  const { user, logout } = useAuth();
+  return (
+    <>
+      {/* Header chính */}
+      <header className="bg-gray-200 py-4 px-4 sm:px-8 flex items-center justify-between relative shadow">
+        <div className="flex items-center gap-2">
+          {user ? (
+            <div className="flex items-center gap-2">
+              <button
+                onClick={logout}
+                className="flex items-center border border-black text-black px-3 py-1 rounded-full hover:bg-black hover:text-white transition"
+              >
+                <span className="text-sm font-semibold mr-2">Log out</span>
+                <FaUserCircle className="text-xl" />
+              </button>
+            </div>
+          ) : (
+            <Link
+              to="/login"
+              className="flex items-center border border-black text-black px-3 py-1 rounded-full hover:bg-black hover:text-white transition"
+            >
+              <span className="text-sm font-semibold mr-2">Sign in</span>
+              <FaUserCircle className="text-xl" />
+            </Link>
+          )}
+        </div>
 
-    {/* Navigation */}
-    <nav className="bg-white flex flex-wrap justify-center gap-4 sm:gap-6 border-b py-3 text-sm sm:text-base font-semibold uppercase text-gray-800">
-      <Link to="/" className="hover:underline hover:text-gray-600 transition">
-        Trang chủ
-      </Link>
-      <Link
-        to="/bestseller"
-        className="hover:underline hover:text-gray-600 transition"
-      >
-        Best Seller
-      </Link>
-      <Link
-        to="/donghonam"
-        className="hover:underline hover:text-gray-600 transition"
-      >
-        Đồng hồ nam
-      </Link>
-      <Link
-        to="/donghonu"
-        className="hover:underline hover:text-gray-600 transition"
-      >
-        Đồng hồ nữ
-      </Link>
-    </nav>
-  </>
-);
+        {/* Logo trung tâm */}
+        <div className="text-2xl font-bold tracking-widest text-gray-900 text-center absolute left-1/2 transform -translate-x-1/2">
+          WATCH AURA
+        </div>
 
+        {/* Bên phải: Giỏ hàng */}
+        <div className="flex items-center gap-2">
+          <span className="text-sm font-medium text-gray-700">
+            GIỎ HÀNG / 0
+          </span>
+          <img src="/giohang.png" alt="Cart" className="w-6 h-6" />
+        </div>
+      </header>
+      {/* Navigation */}
+      <nav className="bg-white flex flex-wrap justify-center gap-4 sm:gap-6 border-b py-3 text-sm sm:text-base font-semibold uppercase text-gray-800">
+        <Link to="/" className="hover:underline hover:text-gray-600 transition">
+          Trang chủ
+        </Link>
+        <Link
+          to="/bestseller"
+          className="hover:underline hover:text-gray-600 transition"
+        >
+          Best Seller
+        </Link>
+        <Link
+          to="/donghonam"
+          className="hover:underline hover:text-gray-600 transition"
+        >
+          Đồng hồ nam
+        </Link>
+        <Link
+          to="/donghonu"
+          className="hover:underline hover:text-gray-600 transition"
+        >
+          Đồng hồ nữ
+        </Link>
+      </nav>
+    </>
+  );
+};
 // FOOTER
 export const Footer = () => (
   <>

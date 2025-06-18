@@ -16,14 +16,18 @@ export const AuthProvider = ({ children }) => {
     }
   };
 
-  // Load user nếu đã login trước đó (token còn trong localStorage)
+  const logout = () => {
+    localStorage.removeItem("token");
+    setUser(null);
+  };
+
   useEffect(() => {
     const token = localStorage.getItem("token");
     if (token) login(token);
   }, []);
 
   return (
-    <AuthContext.Provider value={{ user, login }}>
+    <AuthContext.Provider value={{ user, login, logout }}>
       {children}
     </AuthContext.Provider>
   );
