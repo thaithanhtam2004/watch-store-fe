@@ -1,21 +1,75 @@
 import { useState } from 'react';
 import { useDongHoList } from '../../../hooks/useDongHoList';
+import { useDanhMucList } from '../../../hooks/useDanhMucList';
+import { useCreateDongHo } from '../../../hooks/useCreateDongHo';
+import { useUpdateDongHo } from '../../../hooks/useUpdateDongHo';
 import QuanlyButton from '../../ui/quanlyButton';
 
 export default function WatchModels() {
-  const { data: models, loading, error } = useDongHoList();
+  const { data: models, loading, error, refetch } = useDongHoList();
+  const { data: danhMucs, loading: loadingDanhMuc } = useDanhMucList();
+  const { onCreate, loading: creating, error: createError } = useCreateDongHo();
+  const { onUpdate, loading: updating, error: updateError } = useUpdateDongHo();
+
   const [showForm, setShowForm] = useState(false);
+  const [editingId, setEditingId] = useState(null);
+  const [formData, setFormData] = useState({
+    tenmodel: "",
+    madanhmuc: "",
+    chatlieuvo: "",
+    chatlieuday: "",
+    mauday: "",
+    duongkinh: "",
+    doday: "",
+    chongnuoc: "",
+    dongco: "",
+    mausomatso: "",
+    gioitinh: ""
+  });
 
-  const handleAdd = () => setShowForm(true);
-  const closeForm = () => setShowForm(false);
-
-  const handleEdit = (id) => {
-    console.log('✏️ Sửa model:', id);
+  const handleAdd = () => {
+    setFormData({
+      tenmodel: "",
+      madanhmuc: "",
+      chatlieuvo: "",
+      chatlieuday: "",
+      mauday: "",
+      duongkinh: "",
+      doday: "",
+      chongnuoc: "",
+      dongco: "",
+      mausomatso: "",
+      gioitinh: ""
+    });
+    setEditingId(null);
+    setShowForm(true);
   };
 
-  const handleDelete = (id) => {
-    if (confirm('Bạn có chắc chắn muốn xóa model này?')) {
-      console.log('🗑️ Xóa model:', id);
+  const handleEdit = (id) => {
+    const model = models.find((m) => m.madongho === id);
+    if (!model) return;
+    setFormData({ ...model });
+    setEditingId(id);
+    setShowForm(true);
+  };
+
+  const closeForm = () => setShowForm(false);
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    try {
+      if (editingId) {
+        await onUpdate(editingId, formData);
+        alert("✅ Cập nhật model thành công!");
+      } else {
+        await onCreate(formData);
+        alert("✅ Thêm model thành công!");
+      }
+      setShowForm(false);
+      setEditingId(null);
+      refetch();
+    } catch (err) {
+      alert("❌ Lỗi: " + err.message);
     }
   };
 
@@ -32,10 +86,9 @@ export default function WatchModels() {
         </button>
       </div>
 
-      {/* 🟦 Frame thêm model */}
       {showForm && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
-          <div className="bg-white rounded-lg shadow-xl w-full max-w-2xl p-6 relative">
+          <div className="bg-white rounded-lg shadow-xl w-full max-w-2xl p-6 relative max-h-[90vh] overflow-y-auto">
             <button
               onClick={closeForm}
               className="absolute top-2 right-2 text-gray-500 hover:text-red-500 text-xl"
@@ -43,38 +96,48 @@ export default function WatchModels() {
               ❌
             </button>
 
-            <h2 className="text-xl font-semibold mb-4">Thêm model mới</h2>
+            <h2 className="text-xl font-semibold mb-4">{editingId ? 'Sửa model' : 'Thêm model mới'}</h2>
 
-            <form className="grid grid-cols-2 gap-4">
-              <input type="text" placeholder="Mã đồng hồ" className="p-2 border rounded" />
-              <input type="text" placeholder="Tên model" className="p-2 border rounded" />
-              <input type="text" placeholder="Danh mục" className="p-2 border rounded" />
-              <input type="text" placeholder="Chất liệu vỏ" className="p-2 border rounded" />
-              <input type="text" placeholder="Chất liệu dây" className="p-2 border rounded" />
-              <input type="text" placeholder="Màu dây" className="p-2 border rounded" />
-              <input type="text" placeholder="Đường kính" className="p-2 border rounded" />
-              <input type="text" placeholder="Độ dày" className="p-2 border rounded" />
-              <input type="text" placeholder="Chống nước" className="p-2 border rounded" />
-              <input type="text" placeholder="Động cơ" className="p-2 border rounded" />
-              <input type="text" placeholder="Mặt số" className="p-2 border rounded" />
-              <select className="p-2 border rounded">
-                <option value="">Giới tính</option>
+            <form className="grid grid-cols-2 gap-4" onSubmit={handleSubmit}>
+              <input type="text" placeholder="Tên model" className="p-2 border rounded" value={formData.tenmodel} onChange={(e) => setFormData({ ...formData, tenmodel: e.target.value })} />
+
+              <select className="p-2 border rounded" value={formData.madanhmuc} onChange={(e) => setFormData({ ...formData, madanhmuc: e.target.value })}>
+                <option value="">-- Chọn danh mục --</option>
+                {danhMucs.map((dm) => (
+                  <option key={dm.madanhmuc} value={dm.madanhmuc}>
+                    {dm.tendanhmuc}
+                  </option>
+                ))}
+              </select>
+
+              <input type="text" placeholder="Chất liệu vỏ" className="p-2 border rounded" value={formData.chatlieuvo} onChange={(e) => setFormData({ ...formData, chatlieuvo: e.target.value })} />
+              <input type="text" placeholder="Chất liệu dây" className="p-2 border rounded" value={formData.chatlieuday} onChange={(e) => setFormData({ ...formData, chatlieuday: e.target.value })} />
+              <input type="text" placeholder="Màu dây" className="p-2 border rounded" value={formData.mauday} onChange={(e) => setFormData({ ...formData, mauday: e.target.value })} />
+              <input type="text" placeholder="Đường kính" className="p-2 border rounded" value={formData.duongkinh} onChange={(e) => setFormData({ ...formData, duongkinh: e.target.value })} />
+              <input type="text" placeholder="Độ dày" className="p-2 border rounded" value={formData.doday} onChange={(e) => setFormData({ ...formData, doday: e.target.value })} />
+              <input type="text" placeholder="Chống nước" className="p-2 border rounded" value={formData.chongnuoc} onChange={(e) => setFormData({ ...formData, chongnuoc: e.target.value })} />
+              <input type="text" placeholder="Động cơ" className="p-2 border rounded" value={formData.dongco} onChange={(e) => setFormData({ ...formData, dongco: e.target.value })} />
+              <input type="text" placeholder="Mặt số" className="p-2 border rounded" value={formData.mausomatso} onChange={(e) => setFormData({ ...formData, mausomatso: e.target.value })} />
+
+              <select className="p-2 border rounded col-span-2" value={formData.gioitinh} onChange={(e) => setFormData({ ...formData, gioitinh: e.target.value })}>
+                <option value="">-- Chọn giới tính --</option>
                 <option value="nam">Nam</option>
                 <option value="nu">Nữ</option>
                 <option value="unisex">Unisex</option>
               </select>
-              <button
-                type="submit"
-                className="col-span-2 bg-blue-500 text-white py-2 rounded hover:bg-blue-600"
-              >
-                💾 Lưu model
+
+              {(createError || updateError) && (
+                <p className="text-red-500 col-span-2">❌ {(createError || updateError)}</p>
+              )}
+
+              <button type="submit" className="col-span-2 bg-blue-500 text-white py-2 rounded hover:bg-blue-600">
+                💾 {editingId ? 'Cập nhật' : 'Lưu model'}
               </button>
             </form>
           </div>
         </div>
       )}
 
-      {/* 🟧 Bảng model */}
       {loading && <p className="text-gray-500">Đang tải dữ liệu...</p>}
       {error && <p className="text-red-500">Lỗi: {error}</p>}
 
@@ -117,7 +180,7 @@ export default function WatchModels() {
                     <td className="p-3">
                       <QuanlyButton
                         onEdit={() => handleEdit(model.madongho)}
-                        onDelete={() => handleDelete(model.madongho)}
+                        onDelete={() => console.log('Xóa', model.madongho)}
                       />
                     </td>
                   </tr>
