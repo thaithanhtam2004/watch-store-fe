@@ -6,7 +6,6 @@ export function useCreateDanhMuc() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const [successMessage, setSuccessMessage] = useState("");
-
   const create = async (data) => {
     setLoading(true);
     setError(null);
@@ -15,8 +14,10 @@ export function useCreateDanhMuc() {
     try {
       const res = await createDanhMuc(data);
       setSuccessMessage(res.message || "Tạo danh mục thành công");
+      return res;
     } catch (err) {
       setError(err.message || "Tạo danh mục thất bại");
+      throw err;
     } finally {
       setLoading(false);
     }

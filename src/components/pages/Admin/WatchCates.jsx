@@ -1,55 +1,97 @@
-import { useState } from 'react';
-import { useDanhMucList } from '../../../hooks/useDanhMucList';
-import { useCreateDanhMuc } from '../../../hooks/useCreateDanhMuc';
-import { useDeleteDanhMuc } from '../../../hooks/useDeleteDanhMuc';
-import QuanlyButton from '../../ui/quanlyButton';
+import { useState } from "react";
+import { useDanhMucList } from "../../../hooks/useDanhMucList";
+import { useCreateDanhMuc } from "../../../hooks/useCreateDanhMuc";
+import { useDeleteDanhMuc } from "../../../hooks/useDeleteDanhMuc";
+import { useUpdateDanhMuc } from "../../../hooks/useUpdateDanhMuc";
+import QuanlyButton from "../../ui/quanlyButton";
 
 export default function WatchCategories() {
-  const { data: categories, loading, error } = useDanhMucList();
+  const { data: categories, loading, error, refetch } = useDanhMucList();
   const { create } = useCreateDanhMuc();
-  const { deleteDanhMucById } = useDeleteDanhMuc(); // ✅ Đúng tên hàm
+  const { deleteDanhMucById } = useDeleteDanhMuc();
+  const { update } = useUpdateDanhMuc();
 
   const [showForm, setShowForm] = useState(false);
   const [formData, setFormData] = useState({
-    tendanhmuc: '',
-    dacdiem: ''
+    madanhmuc: "",
+    tendanhmuc: "",
+    dacdiem: "",
   });
+  const [editingId, setEditingId] = useState(null);
 
   const handleAdd = () => {
-    setFormData({ tendanhmuc: '', dacdiem: '' });
+    setFormData({ madanhmuc: "", tendanhmuc: "", dacdiem: "" });
+    setEditingId(null);
     setShowForm(true);
   };
 
-  const closeForm = () => setShowForm(false);
+  const closeForm = () => {
+    setFormData({ madanhmuc: "", tendanhmuc: "", dacdiem: "" });
+    setEditingId(null);
+    setShowForm(false);
+  };
 
   const handleEdit = (id) => {
-    console.log('✏️ Sửa danh mục:', id);
+    const dm = categories.find((d) => d.madanhmuc === id);
+    if (dm) {
+      setFormData({
+        madanhmuc: dm.madanhmuc,
+        tendanhmuc: dm.tendanhmuc,
+        dacdiem: dm.dacdiem,
+      });
+      setEditingId(id);
+      setShowForm(true);
+    }
   };
 
   const handleDelete = async (id) => {
-    if (confirm('Bạn có chắc chắn muốn xóa danh mục này?')) {
+    if (confirm("Bạn có chắc chắn muốn xóa danh mục này?")) {
       try {
-        await deleteDanhMucById(id); // ✅ sửa tên hàm
-        window.location.reload(); // hoặc dùng refetch
+        await deleteDanhMucById(id);
+        await refetch();
       } catch (err) {
-        alert('❌ Không thể xoá: ' + err.message);
+        const msg =
+          err?.response?.data?.message ||
+          err.message ||
+          "Không thể xoá danh mục";
+        alert("❌ " + msg);
       }
     }
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+
     try {
-      await create(formData);
+      if (!editingId) {
+        const isDuplicate = categories.some(
+          (dm) => dm.madanhmuc === formData.madanhmuc
+        );
+        if (isDuplicate) {
+          alert("❌ Mã danh mục đã tồn tại!");
+          return;
+        }
+      }
+
+      if (editingId) {
+        await update(editingId, formData);
+      } else {
+        await create(formData);
+      }
+
       closeForm();
-      window.location.reload();
+      await refetch();
     } catch (err) {
-      alert('❌ Lỗi khi thêm danh mục: ' + err.message);
+      const msg =
+        err?.response?.data?.message ||
+        err.message ||
+        "Lỗi không xác định khi lưu";
+      alert("❌ " + msg);
     }
   };
 
   return (
-    <div>
+    <div className="p-4">
       <h1 className="text-2xl font-bold mb-6">Quản lý Danh mục Đồng hồ</h1>
 
       <div className="flex justify-end mb-4">
@@ -62,7 +104,7 @@ export default function WatchCategories() {
       </div>
 
       {showForm && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50 p-2">
           <div className="bg-white rounded-lg shadow-xl w-full max-w-lg p-6 relative">
             <button
               onClick={closeForm}
@@ -71,9 +113,22 @@ export default function WatchCategories() {
               ❌
             </button>
 
-            <h2 className="text-xl font-semibold mb-4">Thêm danh mục mới</h2>
+            <h2 className="text-xl font-semibold mb-4">
+              {editingId ? "Sửa danh mục" : "Thêm danh mục mới"}
+            </h2>
 
-            <form className="grid grid-cols-1 gap-4" onSubmit={handleSubmit}>
+            <form className="grid gap-4" onSubmit={handleSubmit}>
+              <input
+                type="text"
+                placeholder="Mã danh mục"
+                className="p-2 border rounded"
+                value={formData.madanhmuc}
+                onChange={(e) =>
+                  setFormData({ ...formData, madanhmuc: e.target.value })
+                }
+                required
+                disabled={!!editingId} // Không cho sửa mã khi sửa
+              />
               <input
                 type="text"
                 placeholder="Tên danh mục"
@@ -97,7 +152,7 @@ export default function WatchCategories() {
                 type="submit"
                 className="bg-blue-500 text-white py-2 rounded hover:bg-blue-600"
               >
-                💾 Lưu danh mục
+                💾 {editingId ? "Cập nhật" : "Lưu"} danh mục
               </button>
             </form>
           </div>
@@ -108,8 +163,8 @@ export default function WatchCategories() {
       {error && <p className="text-red-500">Lỗi: {error}</p>}
 
       {!loading && !error && (
-        <div className="overflow-x-auto max-h-[500px] overflow-y-auto border rounded shadow">
-          <table className="table-auto w-full text-left bg-white text-sm">
+        <div className="overflow-x-auto max-h-[500px] overflow-y-auto border rounded shadow text-sm">
+          <table className="min-w-full bg-white text-left">
             <thead className="bg-gray-100 sticky top-0 z-10">
               <tr>
                 <th className="p-3">Mã danh mục</th>
@@ -125,7 +180,7 @@ export default function WatchCategories() {
                     <td className="p-3">{dm.madanhmuc}</td>
                     <td className="p-3">{dm.tendanhmuc}</td>
                     <td className="p-3">{dm.dacdiem}</td>
-                    <td className="p-3">
+                    <td className="p-3 whitespace-nowrap">
                       <QuanlyButton
                         onEdit={() => handleEdit(dm.madanhmuc)}
                         onDelete={() => handleDelete(dm.madanhmuc)}
