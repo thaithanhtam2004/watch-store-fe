@@ -85,11 +85,11 @@ export const ProductImageSlider = ({ mainImage, subImages }) => {
 };
 
 export const ProductDetailsTable = ({ product }) => (
-  <div className="overflow-x-auto mt-6">
-    <table className="w-full border border-gray-300 text-sm">
+  <div className="mt-6 overflow-x-auto">
+    <table className="min-w-[600px] w-full text-sm border border-gray-200 shadow-sm rounded">
       <tbody>
         {[
-          ["Chất liệu case", product.caseMaterial],
+          ["Chất liệu vỏ", product.caseMaterial],
           ["Chất liệu dây", product.strapMaterial],
           ["Màu dây", product.strapColor],
           ["Đường kính", product.diameter],
@@ -98,17 +98,23 @@ export const ProductDetailsTable = ({ product }) => (
           ["Cấu tạo máy", product.movement],
           ["Màu mặt", product.dialColor],
         ].map(([label, value], index) => (
-          <tr key={index} className="border-b">
-            <th className="text-left font-medium p-2 w-1/3 bg-gray-50">
+          <tr
+            key={index}
+            className={`${
+              index % 2 === 0 ? "bg-white" : "bg-gray-50"
+            } border-b last:border-none`}
+          >
+            <th className="w-[200px] px-4 py-2 text-left font-medium text-gray-700 bg-gray-100 whitespace-nowrap">
               {label}
             </th>
-            <td className="p-2 text-gray-700">{value}</td>
+            <td className="px-4 py-2 text-gray-800">{value || "—"}</td>
           </tr>
         ))}
       </tbody>
     </table>
   </div>
 );
+
 
 export const ProductExtraInfo = () => (
   <div className="mt-8 w-full space-y-6 text-sm text-gray-700 px-2 sm:px-0">
