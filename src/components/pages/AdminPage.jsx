@@ -60,12 +60,7 @@ const navigate = useNavigate();
       icon: <FaThLarge />,
       component: <WatchCates />,
     },
-    {
-      key: "khohang",
-      label: "Kho hàng",
-      icon: <FaWarehouse />,
-      component: <KhoHang />,
-    },
+    
     {
       key: "uudaivaphuongthucthanhtoans",
       label: "Ưu đãi & thanh toán",
