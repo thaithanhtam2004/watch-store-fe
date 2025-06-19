@@ -2,6 +2,12 @@ import { useDonHangList } from "../../../hooks/useDonHangList";     // ✅ hook 
 import { useNguoiDungList } from "../../../hooks/useNguoiDungList"; // ✅ hook lấy người dùng
 import { useSanPhamList } from "../../../hooks/useSanPhamList";     // ✅ hook lấy sản phẩm
 
+// Hàm định dạng tiền VND an toàn
+const formatVND = (amount) =>
+  typeof amount === "number"
+    ? amount.toLocaleString("vi-VN", { style: "currency", currency: "VND" })
+    : "0 ₫";
+
 export default function Dashboard() {
   const { data: donHangData = [], loading: loadingDH, error: errorDH } = useDonHangList();
   const { data: nguoiDungData = [], loading: loadingND, error: errorND } = useNguoiDungList();
@@ -42,10 +48,10 @@ export default function Dashboard() {
                   <tr key={dh.madonhang} className="border-b">
                     <td className="p-2">{dh.madonhang}</td>
                     <td className="p-2">{dh.tennguoinhan}</td>
-                    <td className="p-2">{dh.tongtien.toLocaleString()}₫</td>
+                    <td className="p-2">{formatVND(dh.tongtien)}</td>
                     <td className="p-2">
                       <span className="capitalize px-2 py-1 text-sm rounded bg-gray-200">
-                        {dh.trangthai.replaceAll("_", " ")}
+                        {dh.trangthai?.replaceAll("_", " ") || "Không rõ"}
                       </span>
                     </td>
                   </tr>

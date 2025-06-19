@@ -29,7 +29,8 @@ const XacNhanPage = () => {
     return () => {
       localStorage.removeItem("xacnhan_donhang_data");
       localStorage.removeItem("madonhang_vuadat");
-      localStorage.removeItem("tao_don_hang_data");
+      localStorage.removeItem("xacnhan_donhang_data");
+
     };
   }, []);
 
