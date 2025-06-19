@@ -40,7 +40,6 @@ const BestsellerPage = () => {
         soluong: 1,
       });
 
-      // Gửi sự kiện cập nhật header
       window.dispatchEvent(new Event("cart-updated"));
       alert("Đã thêm vào giỏ hàng!");
     } catch (error) {
@@ -52,8 +51,8 @@ const BestsellerPage = () => {
   return (
     <>
       <Header />
-      <div className="px-4 md:px-12 lg:px-24 py-8 min-h-screen">
-        <h2 className="text-3xl font-bold text-center mb-8 uppercase tracking-wide">
+      <div className="px-4 sm:px-6 lg:px-20 py-8 min-h-screen">
+        <h2 className="text-2xl sm:text-3xl font-bold text-center mb-8 uppercase tracking-wide">
           Best Seller
         </h2>
 
@@ -74,12 +73,12 @@ const BestsellerPage = () => {
 
                 <div className="p-4">
                   <Link to={`/product/${product.masanpham}`}>
-                    <h2 className="text-lg font-semibold text-gray-800 truncate hover:text-black">
+                    <h2 className="text-base sm:text-lg font-semibold text-gray-800 truncate hover:text-black">
                       {product.tensanpham || "Tên sản phẩm"}
                     </h2>
                   </Link>
 
-                  <p className="text-red-600 text-xl font-bold mt-1">
+                  <p className="text-red-600 text-lg sm:text-xl font-bold mt-1">
                     {product.giaban
                       ? Number(product.giaban).toLocaleString() + " ₫"
                       : "Giá đang cập nhật"}
@@ -87,7 +86,7 @@ const BestsellerPage = () => {
 
                   <button
                     onClick={() => handleAddToCart(product)}
-                    className="mt-3 w-full bg-gray-800 text-white py-2 rounded-lg hover:bg-gray-700 transition"
+                    className="mt-3 w-full bg-gray-800 text-white py-2 rounded-lg hover:bg-gray-700 transition text-sm sm:text-base"
                   >
                     Thêm vào giỏ
                   </button>
@@ -103,7 +102,7 @@ const BestsellerPage = () => {
 
         {/* Pagination */}
         {totalPages > 1 && (
-          <div className="flex justify-center mt-8 space-x-2">
+          <div className="flex flex-wrap justify-center mt-10 gap-2">
             <button
               onClick={() => changePage(currentPage - 1)}
               disabled={currentPage === 1}

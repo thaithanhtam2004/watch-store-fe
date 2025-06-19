@@ -21,7 +21,7 @@ const RelatedProducts = ({ currentProductId }) => {
 
   return (
     <section className="py-12 px-4 md:px-8 lg:px-16 bg-gray-50">
-      <h3 className="text-2xl font-semibold mb-8 text-center text-gray-800 uppercase tracking-wider">
+      <h3 className="text-xl sm:text-2xl font-semibold mb-8 text-center text-gray-800 uppercase tracking-wider">
         Sản phẩm tương tự
       </h3>
 
@@ -29,26 +29,26 @@ const RelatedProducts = ({ currentProductId }) => {
         {products.map((product) => (
           <Link
             key={product.masanpham}
-            to={`/product/${product.masanpham}`} // <-- Bấm vào chuyển tới trang chi tiết
-            className="bg-white rounded-2xl shadow-md hover:shadow-xl transition duration-300 overflow-hidden"
+            to={`/product/${product.masanpham}`}
+            className="group bg-white rounded-2xl shadow hover:shadow-lg transition duration-300 overflow-hidden flex flex-col"
           >
             <img
               src={product.hinhanhchinh || "/fallback.jpg"}
               alt={product.tensanpham}
-              className="w-full h-56 object-cover hover:scale-105 transition-transform duration-300"
+              className="w-full h-52 sm:h-56 object-cover group-hover:scale-105 transition-transform duration-300"
             />
-            <div className="p-4">
-              <h2 className="text-base font-semibold text-gray-800 truncate mb-1">
+            <div className="p-4 flex flex-col flex-grow">
+              <h2 className="text-sm sm:text-base font-medium text-gray-800 truncate mb-1">
                 {product.tensanpham}
               </h2>
-              <p className="text-red-600 font-bold text-lg">
+              <p className="text-red-600 font-bold text-base sm:text-lg">
                 {Number(product.giaban).toLocaleString("vi-VN")} ₫
               </p>
+
               <button
-                className="mt-3 w-full bg-gray-900 text-white py-2 rounded-xl hover:bg-gray-700 text-sm"
+                className="mt-auto w-full bg-gray-900 text-white py-2 rounded-lg hover:bg-gray-700 text-sm"
                 onClick={(e) => {
-                  e.preventDefault(); // tránh reload
-                  // Mua ngay (có thể mở modal, hoặc điều hướng nếu cần)
+                  e.preventDefault();
                 }}
               >
                 Thêm vào giỏ

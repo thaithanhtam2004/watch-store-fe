@@ -1,6 +1,7 @@
+import React, { useState } from "react";
 export const QuantityAndCart = ({ quantity, setQuantity, onAddToCart }) => {
   return (
-    <div className="flex flex-col md:flex-row md:items-center gap-4">
+    <div className="flex flex-col sm:flex-row sm:items-center gap-4 w-full mt-4">
       <div className="flex items-center space-x-2">
         <button
           onClick={() => setQuantity(Math.max(1, quantity - 1))}
@@ -15,7 +16,7 @@ export const QuantityAndCart = ({ quantity, setQuantity, onAddToCart }) => {
           onChange={(e) =>
             setQuantity(Math.max(1, parseInt(e.target.value) || 1))
           }
-          className="w-12 text-center border rounded"
+          className="w-14 text-center border rounded"
         />
         <button
           onClick={() => setQuantity(quantity + 1)}
@@ -26,17 +27,13 @@ export const QuantityAndCart = ({ quantity, setQuantity, onAddToCart }) => {
       </div>
       <button
         onClick={onAddToCart}
-        className="bg-orange-500 hover:bg-orange-600 text-white font-bold py-2 px-4 rounded w-full md:w-auto"
+        className="bg-orange-500 hover:bg-orange-600 text-white font-bold py-2 px-4 rounded w-full sm:w-auto"
       >
         Thêm vào giỏ hàng
       </button>
     </div>
   );
 };
-
-// ProductImageSlider.jsx
-import React, { useState } from "react";
-
 export const ProductImageSlider = ({ mainImage, subImages }) => {
   const [currentIndex, setCurrentIndex] = useState(0);
   const allImages = [mainImage, ...(subImages || [])];
@@ -52,7 +49,7 @@ export const ProductImageSlider = ({ mainImage, subImages }) => {
         <img
           src={allImages[currentIndex]}
           alt="Hình sản phẩm"
-          className="w-full h-[350px] object-contain rounded shadow"
+          className="w-full h-[300px] sm:h-[350px] object-contain rounded shadow"
         />
         {/* Nút chuyển ảnh */}
         <button
@@ -70,14 +67,14 @@ export const ProductImageSlider = ({ mainImage, subImages }) => {
       </div>
 
       {/* ẢNH PHỤ */}
-      <div className="flex justify-center gap-2 mt-2">
+      <div className="flex justify-center flex-wrap gap-2 mt-2">
         {allImages.map((img, i) => (
           <img
             key={i}
             src={img}
             alt={`thumb-${i}`}
             onClick={() => setCurrentIndex(i)}
-            className={`w-16 h-16 object-cover border cursor-pointer rounded ${
+            className={`w-14 h-14 object-cover border cursor-pointer rounded ${
               i === currentIndex ? "border-orange-500" : "border-gray-300"
             }`}
           />
@@ -88,47 +85,33 @@ export const ProductImageSlider = ({ mainImage, subImages }) => {
 };
 
 export const ProductDetailsTable = ({ product }) => (
-  <table className="w-full border border-gray-300 text-sm">
-    <tbody>
-      <tr className="border-b">
-        <th className="text-left font-medium p-2 w-1/3 bg-gray-50">
-          Chất liệu case
-        </th>
-        <td className="p-2 text-gray-700">{product.caseMaterial}</td>
-      </tr>
-      <tr className="border-b">
-        <th className="text-left font-medium p-2 bg-gray-50">Chất liệu dây</th>
-        <td className="p-2 text-gray-700">{product.strapMaterial}</td>
-      </tr>
-      <tr className="border-b">
-        <th className="text-left font-medium p-2 bg-gray-50">Màu dây</th>
-        <td className="p-2 text-gray-700">{product.strapColor}</td>
-      </tr>
-      <tr className="border-b">
-        <th className="text-left font-medium p-2 bg-gray-50">Đường kính</th>
-        <td className="p-2 text-gray-700">{product.diameter}</td>
-      </tr>
-      <tr className="border-b">
-        <th className="text-left font-medium p-2 bg-gray-50">Độ dày mặt</th>
-        <td className="p-2 text-gray-700">{product.thickness}</td>
-      </tr>
-      <tr className="border-b">
-        <th className="text-left font-medium p-2 bg-gray-50">Chống nước</th>
-        <td className="p-2 text-gray-700">{product.waterResistance}</td>
-      </tr>
-      <tr className="border-b">
-        <th className="text-left font-medium p-2 bg-gray-50">Cấu tạo máy</th>
-        <td className="p-2 text-gray-700">{product.movement}</td>
-      </tr>
-      <tr>
-        <th className="text-left font-medium p-2 bg-gray-50">Màu mặt</th>
-        <td className="p-2 text-gray-700">{product.dialColor}</td>
-      </tr>
-    </tbody>
-  </table>
+  <div className="overflow-x-auto mt-6">
+    <table className="w-full border border-gray-300 text-sm">
+      <tbody>
+        {[
+          ["Chất liệu case", product.caseMaterial],
+          ["Chất liệu dây", product.strapMaterial],
+          ["Màu dây", product.strapColor],
+          ["Đường kính", product.diameter],
+          ["Độ dày mặt", product.thickness],
+          ["Chống nước", product.waterResistance],
+          ["Cấu tạo máy", product.movement],
+          ["Màu mặt", product.dialColor],
+        ].map(([label, value], index) => (
+          <tr key={index} className="border-b">
+            <th className="text-left font-medium p-2 w-1/3 bg-gray-50">
+              {label}
+            </th>
+            <td className="p-2 text-gray-700">{value}</td>
+          </tr>
+        ))}
+      </tbody>
+    </table>
+  </div>
 );
+
 export const ProductExtraInfo = () => (
-  <div className="mt-8 w-full space-y-6 text-sm text-gray-700">
+  <div className="mt-8 w-full space-y-6 text-sm text-gray-700 px-2 sm:px-0">
     <div>
       <h2 className="text-xl font-bold mb-2">HƯỚNG DẪN BẢO QUẢN</h2>
       <ul className="list-disc pl-5 space-y-1">
