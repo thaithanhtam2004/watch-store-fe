@@ -11,7 +11,7 @@ import CheckoutPage from "@/components/pages/CheckoutPage";
 import ProductDetail from "@/components/pages/ProductDetail";
 import ProductLayout from "@/components/layouts/ProductLayout"; // Import tại đây
 import GioHangPage from "@/components/pages/GioHangPage";
-
+import XacNhanPage from "../components/pages/XacNhanPage";
 const AppRoutes = () => (
   <Routes>
     <Route path="/" element={<HomePage />} />
@@ -22,6 +22,7 @@ const AppRoutes = () => (
     <Route path="/bestseller" element={<BestsellerPage />} />
     <Route path="/donghonam" element={<DongHoNamPage />} />
     <Route path="/donghonu" element={<DongHoNuPage />} />
+    <Route path="/xacnhan" element={<XacNhanPage />} />
     {/* Thêm các route khác ở đây nếu cần */}
     <Route path="/product" element={<ProductLayout />}>
       <Route path=":id" element={<ProductDetail />} />
