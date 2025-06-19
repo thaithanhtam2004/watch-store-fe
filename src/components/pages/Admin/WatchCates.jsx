@@ -1,21 +1,50 @@
 import { useState } from 'react';
 import { useDanhMucList } from '../../../hooks/useDanhMucList';
+import { useCreateDanhMuc } from '../../../hooks/useCreateDanhMuc';
+import { useDeleteDanhMuc } from '../../../hooks/useDeleteDanhMuc';
 import QuanlyButton from '../../ui/quanlyButton';
 
 export default function WatchCategories() {
   const { data: categories, loading, error } = useDanhMucList();
-  const [showForm, setShowForm] = useState(false);
+  const { create } = useCreateDanhMuc();
+  const { deleteDanhMucById } = useDeleteDanhMuc(); // ✅ Đúng tên hàm
 
-  const handleAdd = () => setShowForm(true);
+  const [showForm, setShowForm] = useState(false);
+  const [formData, setFormData] = useState({
+    tendanhmuc: '',
+    dacdiem: ''
+  });
+
+  const handleAdd = () => {
+    setFormData({ tendanhmuc: '', dacdiem: '' });
+    setShowForm(true);
+  };
+
   const closeForm = () => setShowForm(false);
 
   const handleEdit = (id) => {
     console.log('✏️ Sửa danh mục:', id);
   };
 
-  const handleDelete = (id) => {
+  const handleDelete = async (id) => {
     if (confirm('Bạn có chắc chắn muốn xóa danh mục này?')) {
-      console.log('🗑️ Xóa danh mục:', id);
+      try {
+        await deleteDanhMucById(id); // ✅ sửa tên hàm
+        window.location.reload(); // hoặc dùng refetch
+      } catch (err) {
+        alert('❌ Không thể xoá: ' + err.message);
+      }
+    }
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    try {
+      await create(formData);
+      closeForm();
+      window.location.reload();
+    } catch (err) {
+      alert('❌ Lỗi khi thêm danh mục: ' + err.message);
     }
   };
 
@@ -32,7 +61,6 @@ export default function WatchCategories() {
         </button>
       </div>
 
-      {/* 🟦 Form thêm danh mục */}
       {showForm && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
           <div className="bg-white rounded-lg shadow-xl w-full max-w-lg p-6 relative">
@@ -45,10 +73,26 @@ export default function WatchCategories() {
 
             <h2 className="text-xl font-semibold mb-4">Thêm danh mục mới</h2>
 
-            <form className="grid grid-cols-1 gap-4">
-              <input type="text" placeholder="Mã danh mục" className="p-2 border rounded" />
-              <input type="text" placeholder="Tên danh mục" className="p-2 border rounded" />
-              <textarea placeholder="Đặc điểm" rows={3} className="p-2 border rounded" />
+            <form className="grid grid-cols-1 gap-4" onSubmit={handleSubmit}>
+              <input
+                type="text"
+                placeholder="Tên danh mục"
+                className="p-2 border rounded"
+                value={formData.tendanhmuc}
+                onChange={(e) =>
+                  setFormData({ ...formData, tendanhmuc: e.target.value })
+                }
+                required
+              />
+              <textarea
+                placeholder="Đặc điểm"
+                rows={3}
+                className="p-2 border rounded"
+                value={formData.dacdiem}
+                onChange={(e) =>
+                  setFormData({ ...formData, dacdiem: e.target.value })
+                }
+              />
               <button
                 type="submit"
                 className="bg-blue-500 text-white py-2 rounded hover:bg-blue-600"
@@ -60,7 +104,6 @@ export default function WatchCategories() {
         </div>
       )}
 
-      {/* 🟧 Bảng danh mục */}
       {loading && <p className="text-gray-500">Đang tải dữ liệu...</p>}
       {error && <p className="text-red-500">Lỗi: {error}</p>}
 
