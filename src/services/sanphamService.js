@@ -13,14 +13,15 @@ export const getSanPhamById = async (masanpham) => {
 };
 
 export const createSanPham = async (sanPhamData) => {
-  const response = await axios.post(API_BASE, sanPhamData, {
+  const response = await axios.post(`${API_BASE}/create`, sanPhamData, {
     withCredentials: true,
   });
   return response.data;
 };
 
+
 export const updateSanPham = async (masanpham, sanPhamData) => {
-  const response = await axios.put(`${API_BASE}/${masanpham}`, sanPhamData, {
+  const response = await axios.put(`${API_BASE}/update/${masanpham}`, sanPhamData, {
     withCredentials: true,
   });
   return response.data;
@@ -41,10 +42,16 @@ export const getDongHoNu = async () => {
 };
 
 export const deleteSanPham = async (masanpham) => {
-  const response = await axios.delete(`${API_BASE}/${masanpham}`, {
-    withCredentials: true,
-  });
-  return response.data;
+  try {
+    const response = await axios.delete(`${API_BASE}/delete/${masanpham}`, {
+      withCredentials: true,
+    });
+    return response.data;
+  } catch (error) {
+    // Ghi rõ lỗi nếu cần debug
+    console.error("❌ deleteSanPham error:", error.response || error.message);
+    throw error; // Để hook hoặc component xử lý tiếp
+  }
 };
 
 
