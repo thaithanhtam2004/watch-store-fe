@@ -7,7 +7,7 @@ import { FaPlus, FaSave } from 'react-icons/fa';
 import { FiCheck, FiX } from 'react-icons/fi';
 import { IoClose } from "react-icons/io5";
 import { useDeleteSanPham } from "../../../hooks/useDeleteSanPham";
-
+import SelectModel from "../../elements/SelectModel";
 export default function SanPhamList() {
   const { onDelete, loading: deleting, error: deleteError } = useDeleteSanPham();
   const { data: products, loading, error, refetch } = useSanPhamList();
@@ -148,7 +148,11 @@ const handleDelete = async (id) => {
 
             <form onSubmit={handleSubmit} className="grid grid-cols-2 gap-4">
               <input type="text" placeholder="Tên sản phẩm" className="p-2 border rounded" value={formData.tensanpham || ""} onChange={(e) => setFormData({ ...formData, tensanpham: e.target.value })} />
-              <input type="text" placeholder="Model" className="p-2 border rounded" value={formData.mamodel || ""} onChange={(e) => setFormData({ ...formData, mamodel: e.target.value })} />
+             <SelectModel
+  value={formData.mamodel}
+  onChange={(value) => setFormData({ ...formData, mamodel: value })}
+/>
+
               <input type="number" placeholder="Giá bán" className="p-2 border rounded" value={formData.giaban || ""} onChange={(e) => setFormData({ ...formData, giaban: e.target.value })} />
               <input type="text" placeholder="Ưu đãi" className="p-2 border rounded" value={formData.mauudai || ""} onChange={(e) => setFormData({ ...formData, mauudai: e.target.value })} />
               <input type="number" placeholder="Số lượng" className="p-2 border rounded" value={formData.soluong || ""} onChange={(e) => setFormData({ ...formData, soluong: e.target.value })} />
