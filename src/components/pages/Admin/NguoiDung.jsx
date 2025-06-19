@@ -1,15 +1,8 @@
-import { useNguoiDungList } from '../../../hooks/useNguoiDungList';
-import QuanlyButton from '../../ui/quanlyButton';
+import { useNguoiDungList } from "../../../hooks/useNguoiDungList";
+import QuanlyButton from "../../ui/quanlyButton";
 
 export default function NguoiDungList() {
   const { data: users, loading, error } = useNguoiDungList();
-
-  const handleDelete = (id) => {
-    if (confirm('Bạn có chắc muốn xoá người dùng này?')) {
-      console.log('🗑️ Xoá người dùng:', id);
-    }
-  };
-
   return (
     <div>
       <h1 className="text-2xl font-bold mb-6">Quản lý Người dùng</h1>
@@ -27,7 +20,6 @@ export default function NguoiDungList() {
                 <th className="p-3">Họ tên</th>
                 <th className="p-3">SĐT</th>
                 <th className="p-3">Vai trò</th>
-                <th className="p-3">Hành động</th>
               </tr>
             </thead>
             <tbody>
@@ -36,17 +28,10 @@ export default function NguoiDungList() {
                   <tr key={user.id} className="border-t hover:bg-gray-50">
                     <td className="p-3">{user.id}</td>
                     <td className="p-3">{user.email}</td>
-                    <td className="p-3">{user.hoten || '-'}</td>
-                    <td className="p-3">{user.sodienthoai || '-'}</td>
-                    <td className="p-3">{user.vaitro || 'user'}</td>
-                    <td className="p-3">
-                      <button
-                        onClick={() => handleDelete(user.id)}
-                        className="text-red-500 hover:text-red-700 font-semibold"
-                      >
-                        🗑️ Xoá
-                      </button>
-                    </td>
+                    <td className="p-3">{user.hoten || "-"}</td>
+                    <td className="p-3">{user.sodienthoai || "-"}</td>
+                    <td className="p-3">{user.vaitro || "user"}</td>
+                    <td className="p-3"></td>
                   </tr>
                 ))
               ) : (
