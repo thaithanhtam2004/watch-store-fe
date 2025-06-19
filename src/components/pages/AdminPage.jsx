@@ -69,18 +69,6 @@ const AdminPage = () => {
       icon: <FaGift />,
       component: <UuDaiVaPhuongThucThanhToan />,
     },
-    {
-      key: "orders",
-      label: "Đơn hàng",
-      icon: <FaClipboardList />,
-      component: <Orders />,
-    },
-    {
-      key: "users",
-      label: "Tài khoản",
-      icon: <FaUsers />,
-      component: <Users />,
-    },
   ];
 
   const renderPage = () => {
