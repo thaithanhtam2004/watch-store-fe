@@ -1,16 +1,16 @@
 import React, { useEffect, useState } from "react";
 import { getDongHoNu } from "@/services/sanphamService";
-import { themVaoGioHang } from "@/services/gioHangService"; // 👈 Thêm
+import { themVaoGioHang } from "@/services/gioHangService"; 
 import { Header, Footer } from "../layouts/main.layout";
 import { Link } from "react-router-dom";
-import { useAuth } from "../../utils/AuthContext"; // 👈 Thêm
+import { useAuth } from "../../utils/AuthContext";
 
 const PRODUCTS_PER_PAGE = 9;
 
 const DongHoNuPage = () => {
   const [products, setProducts] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
-  const { user } = useAuth(); // 👈 Lấy user
+  const { user } = useAuth(); // Lấy user
 
   useEffect(() => {
     getDongHoNu().then(setProducts).catch(console.error);
