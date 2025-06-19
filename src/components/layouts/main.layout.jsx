@@ -3,7 +3,7 @@ import { Link } from "react-router-dom";
 import { FaUserCircle } from "react-icons/fa";
 import { useAuth } from "@/utils/AuthContext";
 import { getGioHangByTaiKhoan } from "@/services/giohangService";
-
+import { MdOutlineAdminPanelSettings } from "react-icons/md";
 // === HEADER ===
 export const Header = () => {
   const { user, logout } = useAuth();
@@ -41,26 +41,37 @@ export const Header = () => {
     <>
       {/* TOP BAR */}
       <header className="bg-gray-200 py-4 px-4 sm:px-8 flex items-center justify-between shadow relative">
-        {/* LEFT: Auth */}
-        <div className="flex items-center gap-2">
-          {user ? (
-            <button
-              onClick={logout}
-              className="flex items-center border border-black text-black px-3 py-1 rounded-full hover:bg-black hover:text-white transition"
-            >
-              <span className="text-sm font-semibold mr-2">Log out</span>
-              <FaUserCircle className="text-xl" />
-            </button>
-          ) : (
+         {/* LEFT: Auth + Admin */}
+          <div className="flex items-center gap-2">
+          {user?.vaitro === "admin" && (
             <Link
-              to="/login"
-              className="flex items-center border border-black text-black px-3 py-1 rounded-full hover:bg-black hover:text-white transition"
+              to="/admin"
+              className="flex items-center gap-2 px-3 py-1 bg-blue-600 text-white rounded-full text-sm font-semibold hover:bg-blue-700 transition"
             >
-              <span className="text-sm font-semibold mr-2">Sign in</span>
-              <FaUserCircle className="text-xl" />
+              <MdOutlineAdminPanelSettings className="text-lg" />
+              Quản lý
             </Link>
           )}
-        </div>
+
+            {user ? (
+              <button
+                onClick={logout}
+                className="flex items-center border border-black text-black px-3 py-1 rounded-full hover:bg-black hover:text-white transition"
+              >
+                <span className="text-sm font-semibold mr-2">Log out</span>
+                <FaUserCircle className="text-xl" />
+              </button>
+            ) : (
+              <Link
+                to="/login"
+                className="flex items-center border border-black text-black px-3 py-1 rounded-full hover:bg-black hover:text-white transition"
+              >
+                <span className="text-sm font-semibold mr-2">Sign in</span>
+                <FaUserCircle className="text-xl" />
+              </Link>
+            )}
+          </div>
+
 
         {/* CENTER: Logo */}
         <div className="absolute left-1/2 transform -translate-x-1/2 text-center">
@@ -73,15 +84,21 @@ export const Header = () => {
         </div>
 
         {/* RIGHT: Cart */}
-        <Link
-          to="/cart"
+        <button
+          onClick={() => {
+            if (!user) {
+              alert("⚠️ Vui lòng đăng nhập để xem giỏ hàng!");
+            } else {
+              window.location.href = "/cart"; // hoặc dùng navigate nếu dùng useNavigate()
+            }
+          }}
           className="flex items-center gap-2 hover:opacity-80 transition"
         >
           <span className="text-sm font-medium text-gray-700 whitespace-nowrap">
             Giỏ hàng / {cartCount}
           </span>
           <img src="/giohang.png" alt="Cart" className="w-6 h-6" />
-        </Link>
+        </button>
       </header>
 
       {/* MAIN NAVIGATION */}

@@ -8,7 +8,7 @@ export const getAllSanPham = async () => {
 };
 
 export const getSanPhamById = async (masanpham) => {
-  const response = await axios.get(`${API_BASE}/${masanpham}`);
+  const response = await axios.get(`${API_BASE}/getId/${masanpham}`);
   return response.data;
 };
 
