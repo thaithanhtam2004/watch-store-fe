@@ -1,19 +1,21 @@
-// components/ActionButtons.jsx
+import { FaEdit, FaTrashAlt } from "react-icons/fa";
 
 export default function QuanlyButton({ onEdit, onDelete }) {
   return (
-    <div className="flex gap-2">
+    <div className="flex flex-col sm:flex-row gap-2">
       <button
         onClick={onEdit}
-        className="px-3 py-1 bg-blue-500 text-white rounded hover:bg-blue-600 text-sm"
+        className="flex items-center gap-2 px-3 py-1 border border-blue-500 text-blue-600 rounded hover:bg-blue-50 text-sm"
       >
-        ✏️ Sửa
+        <FaEdit className="text-blue-600" />
+        <span>Sửa</span>
       </button>
       <button
         onClick={onDelete}
-        className="px-3 py-1 bg-red-500 text-white rounded hover:bg-red-600 text-sm"
+        className="flex items-center gap-2 px-3 py-1 border border-red-500 text-red-600 rounded hover:bg-red-50 text-sm"
       >
-        🗑️ Xóa
+        <FaTrashAlt className="text-red-600" />
+        <span>Xóa</span>
       </button>
     </div>
   );

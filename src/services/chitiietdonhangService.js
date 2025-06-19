@@ -25,9 +25,8 @@ export const getChiTietDonHangById = async (id) => {
 // 📦 Lấy danh sách chi tiết theo mã đơn hàng
 export const getChiTietByDonHangId = async (madonhang) => {
   const response = await axios.get(`${API_BASE}/donhang/${madonhang}`, { withCredentials: true });
-  return response.data.duLieu;
+  return response.data.data; // ✅ Lấy đúng thuộc tính
 };
-
 // ✏️ Cập nhật chi tiết đơn hàng
 export const updateChiTietDonHang = async (id, data) => {
   const response = await axios.put(`${API_BASE}/update/${id}`, data, { withCredentials: true });
