@@ -10,8 +10,12 @@ import AddressForm from "../../components/elements/AddressForm";
 import { usePhuongThucList } from "../../hooks/usePhuongThucList";
 import { useTaoDonHang } from "../../hooks/useTaoDonHang";
 import { useTaoChiTietDonHang } from "../../hooks/useTaoChiTietDonHang";
+import { useNavigate } from "react-router-dom";
+
 
 const CheckoutPage = () => {
+  const navigate = useNavigate();
+
   const { user } = useAuth();
   const CURRENT_USER_ID = user?.id;
 
@@ -126,6 +130,22 @@ const handleDatHang = async () => {
 
     // Bước 2: Gọi API tạo chi tiết đơn hàng
     await taoChiTietDonHangTuLocal(madonhang);
+    localStorage.setItem("madonhang_vuadat", madonhang);
+
+
+    const phuongThuc = phuongThucList.find(pt => pt.maphuongthuc === selectedPhuongThucId);
+
+    localStorage.setItem("xacnhan_donhang_data", JSON.stringify({
+      madonhang,
+      items: donHangLocal,
+      maphuongthuc: selectedPhuongThucId,
+      tenphuongthuc: phuongThuc?.tenphuongthuc || "",
+      tongtien: tongTien,
+      ngaydat: new Date().toISOString()
+    }));
+
+      // ✅ Xóa dữ liệu và chuyển trang
+    navigate("/xacnhan");
 
 console.log("GỬI DỮ LIỆU ĐẶT HÀNG:", {
   mataikhoan: CURRENT_USER_ID,
@@ -137,7 +157,8 @@ console.log("GỬI DỮ LIỆU ĐẶT HÀNG:", {
 
     // ✅ Hiển thị thông báo thành công
     alert(`✅ Đặt hàng thành công!\nMã đơn: ${madonhang}\nTổng tiền: ${formatVND(tongTien)}`);
-    localStorage.removeItem("tao_don_hang_data"); // Xóa dữ liệu tạm nếu có
+        navigate("/xacnhan");
+    // localStorage.removeItem("tao_don_hang_data"); // Xóa dữ liệu tạm nếu có
   } catch (err) {
     alert("❌ Lỗi đặt hàng: " + (err?.response?.data?.message || err.message));
   }
