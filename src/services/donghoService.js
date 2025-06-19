@@ -13,7 +13,7 @@ export const getDongHoById = async (madongho) => {
 };
 
 export const createDongHo = async (dongHoData) => {
-  const response = await axios.post(API_BASE, dongHoData, { withCredentials: true });
+  const response = await axios.post(`${API_BASE}/create`, dongHoData, { withCredentials: true });
   return response.data;
 };
 
