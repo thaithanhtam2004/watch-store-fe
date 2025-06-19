@@ -4,8 +4,10 @@ import { useDanhMucList } from '../../../hooks/useDanhMucList';
 import { useCreateDongHo } from '../../../hooks/useCreateDongHo';
 import { useUpdateDongHo } from '../../../hooks/useUpdateDongHo';
 import QuanlyButton from '../../ui/quanlyButton';
+import { useDeleteDongHo } from '../../../hooks/useDeleteDongHo';
 
 export default function WatchModels() {
+  const { onDelete, loading: deleting, error: deleteError } = useDeleteDongHo();
   const { data: models, loading, error, refetch } = useDongHoList();
   const { data: danhMucs, loading: loadingDanhMuc } = useDanhMucList();
   const { onCreate, loading: creating, error: createError } = useCreateDongHo();
@@ -72,6 +74,21 @@ export default function WatchModels() {
       alert("❌ Lỗi: " + err.message);
     }
   };
+
+const handleDelete = async (id) => {
+  const confirmDelete = window.confirm('Bạn có chắc chắn muốn xoá model này không?');
+  if (!confirmDelete) return;
+
+  try {
+    await onDelete(id);
+    alert('✅ Xoá thành công!');
+    refetch();
+  } catch (err) {
+    const msg = err.response?.data?.message || err.message || "Xoá thất bại";
+    alert('❌ ' + msg);
+  }
+};
+
 
   return (
     <div>
@@ -178,10 +195,10 @@ export default function WatchModels() {
                     <td className="p-3">{model.mausomatso}</td>
                     <td className="p-3 capitalize">{model.gioitinh}</td>
                     <td className="p-3">
-                      <QuanlyButton
-                        onEdit={() => handleEdit(model.madongho)}
-                        onDelete={() => console.log('Xóa', model.madongho)}
-                      />
+                     <QuanlyButton
+                          onEdit={() => handleEdit(model.madongho)}
+                          onDelete={() => handleDelete(model.madongho)}
+                        />
                     </td>
                   </tr>
                 ))

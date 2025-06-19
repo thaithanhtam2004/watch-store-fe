@@ -9,6 +9,7 @@ import {
   FaGift,
   FaClipboardList,
   FaUsers,
+  FaHome
 } from "react-icons/fa";
 
 import Dashboard from "./Admin/Dashboard";
@@ -18,6 +19,8 @@ import WatchCates from "./Admin/WatchCates";
 import UuDaiVaPhuongThucThanhToan from "./Admin/UuDaiVaPhuongThucThanhToanList";
 import KhoHang from "./Admin/KhoHang";
 import NguoiDung from "./Admin/NguoiDung";
+import HomePage from "../../routes/index"
+import { useNavigate } from "react-router-dom";
 
 // Trang tạm thời
 const Orders = () => <div>Trang quản lý đơn hàng</div>;
@@ -25,7 +28,7 @@ const Users = () => <div>Trang quản lý tài khoản</div>;
 
 const AdminPage = () => {
   const [page, setPage] = useState("dashboard");
-
+const navigate = useNavigate();
   const menuItems = [
     {
       key: "dashboard",
@@ -81,6 +84,13 @@ const AdminPage = () => {
       icon: <FaUsers />,
       component: <Users />,
     },
+
+        {
+      key: "trangchu",
+      label: "Trang chủ",
+      icon: <FaHome />,
+    
+    },
   ];
 
   const renderPage = () => {
@@ -96,15 +106,21 @@ const AdminPage = () => {
         <ul className="space-y-3">
           {menuItems.map((item) => (
             <li key={item.key}>
-              <button
-                onClick={() => setPage(item.key)}
+             <button
+                onClick={() => {
+                  if (item.key === "trangchu") {
+                    navigate("/"); // 👉 chuyển sang trang chủ
+                  } else {
+                    setPage(item.key); // các mục admin khác
+                  }
+                }}
                 className={`w-full flex items-center gap-2 text-left px-3 py-2 rounded hover:bg-gray-700 transition ${
                   page === item.key ? "bg-gray-700 font-semibold" : ""
                 }`}
-              >
-                <span>{item.icon}</span>
-                <span>{item.label}</span>
-              </button>
+>
+  <span>{item.icon}</span>
+  <span>{item.label}</span>
+</button>
             </li>
           ))}
         </ul>

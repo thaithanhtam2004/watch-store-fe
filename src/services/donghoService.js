@@ -18,11 +18,11 @@ export const createDongHo = async (dongHoData) => {
 };
 
 export const updateDongHo = async (madongho, dongHoData) => {
-  const response = await axios.put(`${API_BASE}/${madongho}`, dongHoData, { withCredentials: true });
+  const response = await axios.put(`${API_BASE}/update/${madongho}`, dongHoData, { withCredentials: true });
   return response.data;
 };
 
 export const deleteDongHo = async (madongho) => {
-  const response = await axios.delete(`${API_BASE}/${madongho}`, { withCredentials: true });
+  const response = await axios.delete(`${API_BASE}/delete/${madongho}`, { withCredentials: true });
   return response.data;
 };

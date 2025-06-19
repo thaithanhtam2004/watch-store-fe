@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { deleteDanhMuc } from "../services/danhmucService";
 
 export function useDeleteDanhMuc() {
@@ -17,11 +17,8 @@ export function useDeleteDanhMuc() {
     } catch (err) {
       const apiMsg = err.response?.data?.message;
 
-      // Xử lý nếu BE trả thông báo lỗi do ràng buộc khoá ngoại
-      if (apiMsg?.toLowerCase().includes("foreign key")) {
-        setError(
-          "❌ Không thể xoá: Danh mục đang được sử dụng trong bảng Đồng hồ."
-        );
+      if (apiMsg?.toLowerCase().includes("danh mục đang được sử dụng")) {
+        setError("❌ Không thể xoá: Danh mục đang được sử dụng trong bảng Đồng hồ.");
       } else {
         setError(apiMsg || "❌ Xoá thất bại, vui lòng thử lại.");
       }
@@ -29,6 +26,17 @@ export function useDeleteDanhMuc() {
       setLoading(false);
     }
   };
+
+  // Tự động ẩn thông báo sau 4 giây
+  useEffect(() => {
+    if (error || successMessage) {
+      const timer = setTimeout(() => {
+        setError(null);
+        setSuccessMessage("");
+      }, 4000);
+      return () => clearTimeout(timer);
+    }
+  }, [error, successMessage]);
 
   return { deleteDanhMucById, loading, error, successMessage };
 }
