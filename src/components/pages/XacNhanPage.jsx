@@ -1,5 +1,6 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { Header, Footer } from "../layouts/main.layout";
+import { getSanPhamById } from "../../services/sanphamService";
 
 const formatVND = (amount) =>
   parseFloat(amount)?.toLocaleString("vi-VN", {
@@ -14,70 +15,85 @@ const formatDate = (isoDate) => {
 };
 
 const XacNhanPage = () => {
-  const data = JSON.parse(localStorage.getItem("xacnhan_donhang_data") || "{}");
-  const {
-    madonhang,
-    items = [],
-    maphuongthuc,
-    tenphuongthuc,
-    tongtien,
-    ngaydat,
-  } = data;
+  const [sanPhamChiTiet, setSanPhamChiTiet] = useState([]);
+  const [donHangData, setDonHangData] = useState({});
 
   useEffect(() => {
-    // Xóa localStorage khi rời trang
+    const rawData = localStorage.getItem("xacnhan_donhang_data");
+    if (!rawData) return;
+
+    const data = JSON.parse(rawData || "{}");
+    setDonHangData(data);
+
+    const fetchSanPhamChiTiet = async () => {
+      const chiTiet = await Promise.all(
+        (data.items || []).map(async (item) => {
+          try {
+            const sp = await getSanPhamById(item.masanpham);
+            return {
+              ...item,
+              tensanpham: sp?.tensanpham || "Không rõ tên",
+            };
+          } catch (e) {
+            console.error("Lỗi khi lấy sản phẩm:", item.masanpham, e);
+            return { ...item, tensanpham: "Lỗi tên" };
+          }
+        })
+      );
+      setSanPhamChiTiet(chiTiet);
+    };
+
+    fetchSanPhamChiTiet();
+
     return () => {
       localStorage.removeItem("xacnhan_donhang_data");
       localStorage.removeItem("madonhang_vuadat");
-      localStorage.removeItem("xacnhan_donhang_data");
-
     };
   }, []);
+
+  const { madonhang, maphuongthuc, tenphuongthuc, tongtien, ngaydat } = donHangData;
 
   return (
     <>
       <Header />
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 px-6 lg:px-20 py-10">
-        {/* BÊN TRÁI: Chi tiết sản phẩm */}
+        {/* Sản phẩm */}
         <div>
           <h3 className="text-xl font-bold mb-4">CHI TIẾT SẢN PHẨM</h3>
           <div className="border p-4 rounded-lg space-y-3 bg-white">
-            {items.length === 0 ? (
+            {sanPhamChiTiet.length === 0 ? (
               <p>Không có sản phẩm nào.</p>
             ) : (
               <>
-                {items.map((item, index) => (
-                  <div
-                    key={index}
-                    className="flex justify-between items-center border-b pb-2"
-                  >
-                    <div className="flex items-center space-x-3">
-                      <img
-                        src={`/images/${item.hinhanhchinh}`}
-                        alt={item.tensanpham}
-                        className="w-16 h-16 object-cover rounded"
-                      />
-                      <div>
-                        <p className="font-semibold">{item.tensanpham}</p>
-                        <p className="text-sm text-gray-600">x {item.soluong}</p>
-                      </div>
+                {sanPhamChiTiet.map((item, index) => (
+                  <div key={index} className="flex justify-between border-b pb-2">
+                    <div>
+                      <p className="font-semibold">{item.tensanpham}</p>
+                      <p className="text-sm text-gray-600">x {item.soluong}</p>
                     </div>
                     <span className="font-semibold">
-                      {formatVND(parseFloat(item.giaban) * item.soluong)}
+                      {formatVND(item.giaban * item.soluong)}
                     </span>
                   </div>
                 ))}
                 <hr />
                 <div className="flex justify-between font-semibold text-lg">
                   <span>Tổng cộng</span>
-                  <span>{formatVND(tongtien)}</span>
+                  <span>
+                    {formatVND(
+                      sanPhamChiTiet.reduce(
+                        (sum, item) => sum + item.giaban * item.soluong,
+                        0
+                      )
+                    )}
+                  </span>
                 </div>
               </>
             )}
           </div>
         </div>
 
-        {/* BÊN PHẢI: Thông tin đơn hàng */}
+        {/* Thông tin đơn hàng */}
         <div>
           <h3 className="text-xl font-bold mb-4">THÔNG TIN ĐƠN HÀNG</h3>
           <div className="border p-4 rounded-lg space-y-3 bg-white">
