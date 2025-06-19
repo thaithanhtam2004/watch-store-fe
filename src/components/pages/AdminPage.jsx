@@ -72,6 +72,7 @@ const navigate = useNavigate();
       icon: <FaGift />,
       component: <UuDaiVaPhuongThucThanhToan />,
     },
+
     {
       key: "orders",
       label: "Đơn hàng",
@@ -91,6 +92,7 @@ const navigate = useNavigate();
       icon: <FaHome />,
     
     },
+
   ];
 
   const renderPage = () => {
