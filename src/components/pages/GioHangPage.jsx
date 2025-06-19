@@ -4,7 +4,8 @@ import { useGioHang } from "../../hooks/useGioHang";
 import { getGiaBanSanPham } from "../../services/sanphamService";
 import { useAuth } from "../../utils/AuthContext";
 import { useNavigate } from "react-router-dom";
-import { xoaKhoiGioHang } from "../../services/giohangService";
+import { xoaKhoiGioHang, capNhatSoLuong } from "../../services/giohangService"; // THÊM
+
 const CartPage = () => {
   const { user } = useAuth();
   const CURRENT_USER_ID = user?.id;
@@ -59,56 +60,68 @@ const CartPage = () => {
     );
   };
 
-const items = gioHang
-  .filter((sp) => selectedItems.includes(sp.magiohang))
-  .map((sp) => {
-    const giaban = giaSanPhamMap[sp.masanpham]?.giaban || 0;
-    return {
-      masanpham: sp.masanpham,
-      soluong: sp.soluong,
-      giaban: giaban,
-    };
-  });
+  const handleThayDoiSoLuong = async (magiohang, newSoLuong) => {
+    if (newSoLuong < 1) return;
+    try {
+      console.log("🔍 Đang cập nhật:", magiohang, newSoLuong); // debug
+      await capNhatSoLuong({ magiohang, soluong: newSoLuong });
+      refetch();
+      window.dispatchEvent(new Event("cart-updated"));
+    } catch (err) {
+      console.error("Lỗi cập nhật số lượng:", err);
+      alert("Không thể cập nhật số lượng");
+    }
+  };
+
+  const items = gioHang
+    .filter((sp) => selectedItems.includes(sp.magiohang))
+    .map((sp) => {
+      const giaban = giaSanPhamMap[sp.masanpham]?.giaban || 0;
+      return {
+        masanpham: sp.masanpham,
+        soluong: sp.soluong,
+        giaban: giaban,
+      };
+    });
 
   const tongTien = items.reduce((sum, item) => {
     const giaban = giaSanPhamMap[item.masanpham]?.giaban || 0;
     return sum + giaban * item.soluong;
   }, 0);
 
-const handleTaoDonHang = () => {
-  // Lọc sản phẩm được chọn (chỉ lấy từ selectedItems)
-  const selected = gioHang.filter((sp) => selectedItems.includes(sp.magiohang));
+  const handleTaoDonHang = () => {
+    const selected = gioHang.filter((sp) =>
+      selectedItems.includes(sp.magiohang)
+    );
 
-  if (selected.length === 0) {
-    alert("Chưa chọn sản phẩm nào.");
-    return;
-  }
+    if (selected.length === 0) {
+      alert("Chưa chọn sản phẩm nào.");
+      return;
+    }
 
-  // Tạo danh sách item đúng định dạng
-  const items = selected.map((sp) => {
-    const giaban = giaSanPhamMap[sp.masanpham]?.giaban || 0;
-    return {
-      masanpham: sp.masanpham,
-      soluong: sp.soluong,
-      giaban: giaban,
+    const items = selected.map((sp) => {
+      const giaban = giaSanPhamMap[sp.masanpham]?.giaban || 0;
+      return {
+        masanpham: sp.masanpham,
+        soluong: sp.soluong,
+        giaban: giaban,
+      };
+    });
+
+    const tongTien = items.reduce(
+      (sum, item) => sum + item.giaban * item.soluong,
+      0
+    );
+
+    const donHangData = {
+      mataikhoan: CURRENT_USER_ID,
+      items,
+      tongtien: tongTien,
     };
-  });
 
-  // Tính tổng tiền
-  const tongTien = items.reduce((sum, item) => sum + item.giaban * item.soluong, 0);
-
-  const donHangData = {
-    mataikhoan: CURRENT_USER_ID,
-    items,
-    tongtien: tongTien,
+    localStorage.setItem("tao_don_hang_data", JSON.stringify(donHangData));
+    navigate("/checkout");
   };
-
-  // ✅ Ghi đúng sản phẩm được chọn vào localStorage
-  localStorage.setItem("tao_don_hang_data", JSON.stringify(donHangData));
-
-  // ✅ Điều hướng sang trang checkout
-  navigate("/checkout");
-};
 
   const handleXoa = async (magiohang) => {
     if (!window.confirm("Bạn có chắc muốn xoá sản phẩm này?")) return;
@@ -161,7 +174,28 @@ const handleTaoDonHang = () => {
                         />
                       </td>
                       <td className="border px-2 py-2">{info.tensanpham}</td>
-                      <td className="border px-2 py-2">{sp.soluong}</td>
+                      <td className="border px-2 py-2 text-center">
+                        <div className="flex items-center justify-center gap-2">
+                          <button
+                            onClick={() =>
+                              handleThayDoiSoLuong(sp.magiohang, sp.soluong - 1)
+                            }
+                            className="px-2 py-1 border rounded hover:bg-gray-200"
+                            disabled={sp.soluong <= 1}
+                          >
+                            −
+                          </button>
+                          <span>{sp.soluong}</span>
+                          <button
+                            onClick={() =>
+                              handleThayDoiSoLuong(sp.magiohang, sp.soluong + 1)
+                            }
+                            className="px-2 py-1 border rounded hover:bg-gray-200"
+                          >
+                            +
+                          </button>
+                        </div>
+                      </td>
                       <td className="border px-2 py-2">
                         {formatVND(info.giaban)}
                       </td>

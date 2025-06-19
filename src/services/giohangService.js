@@ -20,11 +20,10 @@ export const getGioHangByTaiKhoan = async (mataikhoan) => {
   return response.data.data; // Dữ liệu nằm trong `data`
 };
 
-// 🔄 Cập nhật số lượng sản phẩm trong giỏ hàng
 export const capNhatSoLuong = async ({ magiohang, soluong }) => {
   const response = await axios.put(
-    `${API_BASE}/update`,
-    { magiohang, soluong },
+    `${API_BASE}/update/${magiohang}`,
+    { soluong },
     { withCredentials: true }
   );
   return response.data;
