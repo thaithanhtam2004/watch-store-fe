@@ -1,11 +1,10 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
-import { useState, useEffect } from "react";
-import { useGioHang } from "@/hooks/useGioHang";
-import { useAuth } from "../../utils/AuthContext";
 import { FaUserCircle } from "react-icons/fa";
+import { useAuth } from "@/utils/AuthContext";
 import { getGioHangByTaiKhoan } from "@/services/giohangService";
-// HEADER
+
+// === HEADER ===
 export const Header = () => {
   const { user, logout } = useAuth();
   const [cartCount, setCartCount] = useState(0);
@@ -40,7 +39,9 @@ export const Header = () => {
 
   return (
     <>
-      <header className="bg-gray-200 py-4 px-4 sm:px-8 flex items-center justify-between relative shadow">
+      {/* TOP BAR */}
+      <header className="bg-gray-200 py-4 px-4 sm:px-8 flex items-center justify-between shadow relative">
+        {/* LEFT: Auth */}
         <div className="flex items-center gap-2">
           {user ? (
             <button
@@ -61,24 +62,29 @@ export const Header = () => {
           )}
         </div>
 
-        {/* Logo */}
-        <div className="text-2xl font-bold tracking-widest text-gray-900 text-center absolute left-1/2 transform -translate-x-1/2">
-          WATCH AURA
+        {/* CENTER: Logo */}
+        <div className="absolute left-1/2 transform -translate-x-1/2 text-center">
+          <Link
+            to="/"
+            className="text-xl sm:text-2xl font-bold tracking-widest text-gray-900"
+          >
+            WATCH AURA
+          </Link>
         </div>
 
-        {/* Cart */}
+        {/* RIGHT: Cart */}
         <Link
           to="/cart"
           className="flex items-center gap-2 hover:opacity-80 transition"
         >
-          <span className="text-sm font-medium text-gray-700">
-            GIỎ HÀNG / {cartCount}
+          <span className="text-sm font-medium text-gray-700 whitespace-nowrap">
+            Giỏ hàng / {cartCount}
           </span>
           <img src="/giohang.png" alt="Cart" className="w-6 h-6" />
         </Link>
       </header>
 
-      {/* Navigation */}
+      {/* MAIN NAVIGATION */}
       <nav className="bg-white flex flex-wrap justify-center gap-4 sm:gap-6 border-b py-3 text-sm sm:text-base font-semibold uppercase text-gray-800">
         <Link to="/" className="hover:underline hover:text-gray-600 transition">
           Trang chủ
@@ -105,7 +111,8 @@ export const Header = () => {
     </>
   );
 };
-// FOOTER
+
+// === FOOTER ===
 export const Footer = () => (
   <>
     <footer className="bg-gray-100 text-sm sm:text-base px-4 sm:px-8 py-10 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6 text-gray-800">
@@ -161,7 +168,7 @@ export const Footer = () => (
       </div>
     </footer>
 
-    {/* Google Map */}
+    {/* GOOGLE MAP */}
     <div className="w-full px-4 sm:px-8 my-4 flex justify-center">
       <div className="w-full sm:w-3/4 md:w-2/3 h-[350px] overflow-hidden rounded-lg shadow">
         <iframe
@@ -177,7 +184,7 @@ export const Footer = () => (
       </div>
     </div>
 
-    {/* Copyright */}
+    {/* COPYRIGHT */}
     <div className="bg-gray-800 text-white text-center text-xs py-3">
       © 2025 WATCH AURA — All rights reserved.
     </div>
