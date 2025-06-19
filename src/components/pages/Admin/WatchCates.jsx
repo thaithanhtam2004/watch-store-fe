@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useDanhMucList } from "../../../hooks/useDanhMucList";
 import { useCreateDanhMuc } from "../../../hooks/useCreateDanhMuc";
 import { useDeleteDanhMuc } from "../../../hooks/useDeleteDanhMuc";
@@ -6,9 +6,9 @@ import { useUpdateDanhMuc } from "../../../hooks/useUpdateDanhMuc";
 import QuanlyButton from "../../ui/quanlyButton";
 
 export default function WatchCategories() {
-  const { data: categories, loading, error, refetch } = useDanhMucList();
+  const { data: categories, loading, error: fetchError, refetch } = useDanhMucList();
   const { create } = useCreateDanhMuc();
-  const { deleteDanhMucById } = useDeleteDanhMuc();
+  const { deleteDanhMucById, loading: deleting, error, successMessage } = useDeleteDanhMuc();
   const { update } = useUpdateDanhMuc();
 
   const [showForm, setShowForm] = useState(false);
@@ -18,6 +18,15 @@ export default function WatchCategories() {
     dacdiem: "",
   });
   const [editingId, setEditingId] = useState(null);
+
+  // ✅ Hiện alert khi có lỗi hoặc thành công
+  useEffect(() => {
+    if (successMessage) alert(successMessage);
+  }, [successMessage]);
+
+  useEffect(() => {
+    if (error) alert(error);
+  }, [error]);
 
   const handleAdd = () => {
     setFormData({ madanhmuc: "", tendanhmuc: "", dacdiem: "" });
@@ -46,16 +55,8 @@ export default function WatchCategories() {
 
   const handleDelete = async (id) => {
     if (confirm("Bạn có chắc chắn muốn xóa danh mục này?")) {
-      try {
-        await deleteDanhMucById(id);
-        await refetch();
-      } catch (err) {
-        const msg =
-          err?.response?.data?.message ||
-          err.message ||
-          "Không thể xoá danh mục";
-        alert("❌ " + msg);
-      }
+      await deleteDanhMucById(id);
+      await refetch();
     }
   };
 
@@ -75,8 +76,10 @@ export default function WatchCategories() {
 
       if (editingId) {
         await update(editingId, formData);
+        alert("✅ Cập nhật danh mục thành công");
       } else {
         await create(formData);
+        alert("✅ Thêm danh mục thành công");
       }
 
       closeForm();
@@ -103,6 +106,11 @@ export default function WatchCategories() {
         </button>
       </div>
 
+      {loading && <p className="text-gray-500">Đang tải dữ liệu...</p>}
+      {fetchError && (
+        <p className="text-red-600">Lỗi tải dữ liệu: {fetchError}</p>
+      )}
+
       {showForm && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50 p-2">
           <div className="bg-white rounded-lg shadow-xl w-full max-w-lg p-6 relative">
@@ -127,7 +135,7 @@ export default function WatchCategories() {
                   setFormData({ ...formData, madanhmuc: e.target.value })
                 }
                 required
-                disabled={!!editingId} // Không cho sửa mã khi sửa
+                disabled={!!editingId}
               />
               <input
                 type="text"
@@ -159,10 +167,7 @@ export default function WatchCategories() {
         </div>
       )}
 
-      {loading && <p className="text-gray-500">Đang tải dữ liệu...</p>}
-      {error && <p className="text-red-500">Lỗi: {error}</p>}
-
-      {!loading && !error && (
+      {!loading && !fetchError && (
         <div className="overflow-x-auto max-h-[500px] overflow-y-auto border rounded shadow text-sm">
           <table className="min-w-full bg-white text-left">
             <thead className="bg-gray-100 sticky top-0 z-10">
